@@ -15,4 +15,4 @@ Our developer site is
 
 http://www.htmlhifive.com/
 
-Let's hifive !.
+Let's hifive !

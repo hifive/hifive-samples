@@ -14,3 +14,5 @@ http://www.apache.org/licenses/LICENSE-2.0
 Our developer site is
 
 http://www.htmlhifive.com/
+
+Let's hifive !.

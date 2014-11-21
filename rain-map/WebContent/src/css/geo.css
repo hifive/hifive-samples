@@ -1,0 +1,314 @@
+@CHARSET "UTF-8";
+/*
+ * Copyright (C) 2014 NS Solutions Corporation
+ */
+body {
+	background: #ffffff;
+}
+
+div#mapControl {
+	width: 1024px;
+	margin: auto;
+}
+
+div#mapContainer {
+	position: relative;
+	float: left;
+	width: 1024px;
+	height: 500px;
+	margin: auto;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+}
+
+div#map {
+	width: 1024px;
+	height: 500px;
+	float: left;
+	margin: 10px;
+	border: 3px #555 solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+}
+
+div#sliderContainer {
+	width: 1024px;
+	height: 50px;
+	padding: 5px;
+	margin-top: -12px;
+	float: left;
+}
+
+input#slider {
+	width: 1024px;
+	height: 2.3rem;
+	margin: 5px;
+}
+
+[type="range"] {
+	-webkit-appearance: none;
+	cursor: pointer;
+	width: 100%;
+	vertical-align: middle;
+	background-color: rgba(250, 250, 250, 1.0);
+	-webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
+	-moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
+	-webkit-border-radius: 24px;
+	-moz-border-radius: 24px;
+	border: 1px #555 solid;
+	border-radius: 24px;
+}
+
+[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	cursor: pointer;
+	position: relative;
+	z-index: 5;
+	border: 1px #555 solid;
+	width: 2.3rem;
+	height: 2.3rem;
+	background-color: rgba(220, 220, 220, 1.0);
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+}
+
+[type="range"]:focus,[type="range"]:focus::-webkit-slider-thumb,[type="range"]:active,[type="range"]:active::-webkit-slider-thumb
+	{
+	cursor: ew-resize;
+	outline: none;
+}
+
+[type="range"]:active::-webkit-slider-thumb {
+	background-color: rgba(180, 180, 180, 1.0);
+}
+
+div.indicatorContainer {
+	position: relative;
+	width: 200px;
+	height: 200px;
+	margin: 0px auto;
+	top: 50%;
+	margin-top: -100px
+}
+
+input#date {
+	position: relative;
+	float: left;
+	width: 220px;;
+	height: 90px;
+	border: 3px #555 solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+	margin-top: 70px;
+	left: 10px;
+	font-size: 2.5em;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 50px;
+}
+
+div#playContainer {
+	position: relative;
+	float: left;
+	width: 260px;
+	height: 110px;
+	margin-top: 70px;
+	margin-bottom: 10px;
+	left: 55px;
+}
+
+div#playerButtonContainer {
+	position: relative;
+	float: left;
+	width: 110px;
+	height: 110px;
+	margin-right: 12px;
+}
+
+input#playButton {
+	width: 110px;
+	height: 110px;
+	background: url(../../res/picture/play.png) no-repeat;
+	background-size: 50px 50px;
+	background-position: center center;
+	border: 3px #00C50F solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+}
+
+input#playButton:hover {
+	width: 110px;
+	height: 110px;
+	background: url(../../res/picture/onPlay.png) no-repeat;
+	background-size: 50px 50px;
+	background-position: center center;
+	border: 3px #8EFF8F solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+}
+
+input#pauseButton {
+	width: 110px;
+	height: 110px;
+	background: url(../../res/picture/pause.png) no-repeat;
+	background-size: 50px 50px;
+	background-position: center center;
+	border: 3px #D20000 solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+	display: none;
+}
+
+input#pauseButton:hover {
+	width: 110px;
+	height: 110px;
+	background: url(../../res/picture/onPause.png) no-repeat;
+	background-size: 50px 50px;
+	background-position: center center;
+	border: 3px #FF5B5B solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+}
+
+div#speedControls {
+	position: relative;
+	float: left;
+	width: 123px;
+	height: 60px;
+	margin: 0px auto;
+}
+
+div#speedLabel {
+	width: 127px;
+	height: 20px;
+	font-size: 1.2rem;
+	margin: 0px auto;
+	margin-left: 6px;
+	margin-top: 10px;
+	text-align: center;
+}
+
+input#speed {
+	width: 103px;
+	height: 30px;
+	margin: 5px auto;
+	text-align: right;
+	font-size: 1.2rem;
+}
+
+div#speedButtons {
+	width: 127px;
+	height: 30px;
+}
+
+input.speedButton {
+	width: 45px;
+	float: left;
+	height: 30px;
+	margin: 3px 5px;
+	font-size: 1.2rem;
+	background: #FFF;
+	border: 2px #555 solid;
+}
+
+input.speedButton:hover {
+	background: #B8FBFF;
+}
+
+input#plus {
+	position: relative;
+	margin-left: 16px;
+}
+
+input#minus {
+	position: relative;
+	margin-left: 10px;
+}
+
+div#cameraResetContainer {
+	position: relative;
+	float: left;
+	width: 110px;
+	height: 110px;
+	margin-top: 70px;
+	left: 65px;
+}
+
+input#cameraResetButton {
+	width: 110px;
+	height: 110px;
+	background: url(../../res/picture/cameraReset.png) no-repeat;
+	background-size: 100px 80px;
+	background-position: center center;
+	border: 3px #555 solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+}
+
+input#cameraResetButton:hover {
+	width: 110px;
+	height: 110px;
+	background: url(../../res/picture/cameraResetOn.png) no-repeat;
+	background-size: 100px 80px;
+	background-position: center center;
+	border: 3px #888 solid;
+	border-radius: 10px 10px 10px 10px/10px 10px 10px 10px;
+}
+
+div#colors {
+	position: relative;
+	float: left;
+	width: 330px;;
+	height: 110px;
+	margin-top: 42px;
+	left: 70px;
+	font-size: 3em;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 180px;
+}
+
+div.colorScale {
+	position: relative;
+	float: left;
+	width: 110px;
+	height: 110px;
+}
+
+div.tile {
+	position: relative;
+	float: left;
+	width: 50px;
+	height: 50px;
+	left: 50%;
+	margin-left: -25px;
+	top: 50%;
+	margin-top: -25px;
+}
+
+div#tile1 {
+	background: #19F4FE;
+}
+
+div#tile2 {
+	background: #FFA804;
+}
+
+div#tile3 {
+	background: #E7001E;
+}
+
+div.label {
+	position: relative;
+	width: 130px;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	font-size: 1.2rem;
+	top: 50%;
+	margin-top: 25px;
+}
+
+/* iPad用レイアウト */
+@media screen and (max-device-width: 1024px) {
+}
+
+/* フッタ */
+.footer {
+	clear: both;
+	padding: 1em;
+}

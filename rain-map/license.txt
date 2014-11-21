@@ -1,0 +1,53 @@
+Unless otherwise stated, all source files are licensed under
+the Apache License, Version 2.0(http://www.apache.org/licenses/LICENSE-2.0).
+
+-----
+Code under:
+WebContent/res/lib/jquery
+
+jQuery
+URL:http://jquery.com/
+License:MIT license
+		https://jquery.org/license/
+Local Modifications: None.
+
+-----
+Code under:
+WebContent/res/lib/hifive
+
+hifive
+URL:https://github.com/hifive/hifivemain
+License:Apache License, Version 2.0 (the "License")
+	http://www.apache.org/licenses/LICENSE-2.0
+Local Modifications: None.
+
+-----
+Code under:
+WebContent/res/lib/threejs
+
+theejs
+https://github.com/mrdoob/three.js/
+License:The MIT License
+	https://github.com/mrdoob/three.js/blob/master/LICENSE
+Local Modifications: None.
+
+-----
+Code under:
+WebContent/res/lib/d3
+
+d3
+https://github.com/mbostock/d3
+License:The BSD License
+	http://opensource.org/licenses/BSD-3-Clause
+Local Modifications: None.
+
+-----
+Code under:
+WebContent/res/lib/d3-threeD
+
+d3-threeD
+https://github.com/asutherland/d3-threeD
+License: MPL v.2.0
+	https://www.mozilla.org/MPL/2.0/
+Local Modifications: make the "transformSVGPath" function accessable through the variable "$d3g".
+					 		change the return value of "transformSVGPath" function into an array of path elements.

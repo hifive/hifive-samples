@@ -49,5 +49,5 @@ d3-threeD
 https://github.com/asutherland/d3-threeD
 License: MPL v.2.0
 	https://www.mozilla.org/MPL/2.0/
-Local Modifications: make the "transformSVGPath" function accessable through the variable "$d3g".
+Local Modifications: make the "transformSVGPath" function accessible through the variable "$d3g".
 					 		change the return value of "transformSVGPath" function into an array of path elements.

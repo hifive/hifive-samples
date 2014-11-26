@@ -15,20 +15,9 @@
  */
 (function($) {
 	/**
-	 * データファイルをparseしてデータを整形するロジック
-	 * これを作成することで、任意のデータを読み込めるようになっている
-	 * JSONファイルで対応表をつくる
-	 * {
-	 * 	DataKey: MapKey,
-	 * 	...
-	 *  }
-	 *  が並ぶオブジェクトとする。
-	 *
-	 *  parse後のデータは次の形式とする。
-	 *  {
-	 *  	date1: {MapKey1: value1, MapKey2: value2,....}
-	 *  	date2: {MapKey1: ...
-	 *  }
+	 * データファイルをparseしてデータを整形するロジック これを作成することで、任意のデータを読み込めるようになっている JSONファイルで対応表をつくる { DataKey:
+	 * MapKey, ... } が並ぶオブジェクトとする。 parse後のデータは次の形式とする。 { date1: {MapKey1: value1, MapKey2:
+	 * value2,....} date2: {MapKey1: ... }
 	 */
 	var ParseDataFileLogic = {
 
@@ -93,7 +82,8 @@
 			var mapKeyList = new Array();
 			for (var i = 0; i < dataKeyList.length; i++) {
 				var dataKey = dataKeyList[i];
-				var mapKey = (!correspondenceTable[dataKey]) ? 'undefined' : correspondenceTable[dataKey];
+				var mapKey = (!correspondenceTable[dataKey]) ? 'undefined'
+						: correspondenceTable[dataKey];
 				mapKeyList.push(mapKey);
 			}
 			return mapKeyList;
@@ -128,4 +118,3 @@
 	h5.core.expose(ParseDataFileLogic);
 
 })(jQuery);
-

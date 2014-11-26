@@ -37,7 +37,8 @@
 				//着目している3角形の重心の計算
 				var triangleCenter = this._culculateTriangleCenter(vertice1, vertice2, vertice3);
 				//着目している3角形の面積
-				var triangleArea = this.VectorLogic.culculateTriangleArea(vertice1, vertice2, vertice3);
+				var triangleArea = this.VectorLogic.culculateTriangleArea(vertice1, vertice2,
+						vertice3);
 				areaSum += triangleArea;
 
 				//面積を重みとした各三角形の重心の線形和を計算

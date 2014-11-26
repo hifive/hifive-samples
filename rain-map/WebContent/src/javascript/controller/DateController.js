@@ -28,7 +28,9 @@
 
 		'{rootElement} change': function(context, $el) {
 			var value = $el.val();
-			this.trigger('dateChanged', {date: value});
+			this.trigger('dateChanged', {
+				date: value
+			});
 		}
 	};
 

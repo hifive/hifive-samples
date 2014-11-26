@@ -158,7 +158,9 @@
 			var height = $root.height();
 
 			if (THREE.WebGLRenderer) {
-				this.renderer = new THREE.WebGLRenderer({ antialias: true });
+				this.renderer = new THREE.WebGLRenderer({
+					antialias: true
+				});
 			} else {
 				this.renderer = new THREE.CanvasRenderer();
 			}
@@ -177,7 +179,8 @@
 			// GeoJSONを読む
 			// keyで指定した要素をキーとした連想配列を返す
 			// keyが空ならgeometryの配列を返す
-			this.MapCreateLogic.loadMapData(url, keyProps, colorGroupingProp, this.IndicatorController.indicatorItem)
+			this.MapCreateLogic.loadMapData(url, keyProps, colorGroupingProp,
+					this.IndicatorController.indicatorItem)
 
 			// 取得に成功した場合
 			.done(this.own(function(mapData) {

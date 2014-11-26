@@ -30,12 +30,17 @@
 			var rotationX = vector.angleTo(this.fundamentalVector.x);
 			var rotationY = vector.angleTo(this.fundamentalVector.y);
 			var rotationZ = vector.angleTo(this.fundamentalVector.z);
-			return {x: rotationX, y: rotationY, z: rotationZ};
+			return {
+				x: rotationX,
+				y: rotationY,
+				z: rotationZ
+			};
 		},
 
 		//二つのベクトルの内積を計算
 		culcInnerProduct: function(vector1, vector2) {
-			var innerProduct = vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
+			var innerProduct = vector1.x * vector2.x + vector1.y * vector2.y + vector1.z
+					* vector2.z;
 			return innerProduct;
 		},
 
@@ -43,8 +48,10 @@
 		culculateTriangleArea: function(vector1, vector2, vector3) {
 
 			//2辺をあらわすベクトル
-			var sideVector1 = new THREE.Vector3(vector2.x - vector1.x, vector2.y - vector1.y, vector2.z - vector1.z);
-			var sideVector2 = new THREE.Vector3(vector3.x - vector1.x, vector3.y - vector1.y, vector3.z - vector1.z);
+			var sideVector1 = new THREE.Vector3(vector2.x - vector1.x, vector2.y - vector1.y,
+					vector2.z - vector1.z);
+			var sideVector2 = new THREE.Vector3(vector3.x - vector1.x, vector3.y - vector1.y,
+					vector3.z - vector1.z);
 
 			//2ベクトルの内積
 			var innerProduct = this.culcInnerProduct(sideVector1, sideVector2);
@@ -54,7 +61,8 @@
 			var squaredLength2 = sideVector2.lengthSq();
 
 			//面積
-			var area = 1 / 2 * Math.sqrt(squaredLength1 * squaredLength2 - innerProduct * innerProduct);
+			var area = 1 / 2 * Math.sqrt(squaredLength1 * squaredLength2 - innerProduct
+					* innerProduct);
 			return area;
 		}
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 (function($) {
-	var PLAYBUTTONSELECTOR=  '#playButton';
+	var PLAYBUTTONSELECTOR = '#playButton';
 	var PAUSEBUTTONSELECTOR = '#pauseButton';
 
 	/**
@@ -25,16 +25,15 @@
 		__name: 'geo.PlayerButtonController',
 
 
-		'{rootElement} click' : function(context, $el) {
+		'{rootElement} click': function(context, $el) {
 			this.trigger('playerClicked', null);
 		},
 
 		switchButtonImage: function(onPlayFlg) {
-			if (onPlayFlg ) {
+			if (onPlayFlg) {
 				this.$find(PLAYBUTTONSELECTOR).css('display', 'none');
 				this.$find(PAUSEBUTTONSELECTOR).css('display', 'inline');
-			}
-			else {
+			} else {
 				this.$find(PAUSEBUTTONSELECTOR).css('display', 'none');
 				this.$find(PLAYBUTTONSELECTOR).css('display', 'inline');
 			}

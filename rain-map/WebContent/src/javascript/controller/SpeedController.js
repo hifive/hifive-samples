@@ -26,7 +26,9 @@
 
 		'{rootElement} change': function() {
 			var speed = this.getSpeed();
-			this.trigger('speedChanged', {speed: speed});
+			this.trigger('speedChanged', {
+				speed: speed
+			});
 		},
 
 		getSpeed: function() {
@@ -47,49 +49,44 @@
 		//1～20までの数値かをチェック
 		validate: function(value) {
 
-			if (typeof value === 'number' ) {
+			if (typeof value === 'number') {
 				value = value.toString();
 			}
 
 			var index = value.search(this._REGEXP);
 			if (index === -1) {
 				return false;
-			}
-			else {
+			} else {
 				return true;
 			}
 		},
 
 		'#plus click': function() {
 			var speed = this.getSpeed();
-			if ( this.validate(speed) ) {
+			if (this.validate(speed)) {
 				var validatedSpeed = Number(speed);
 				if (validatedSpeed >= 20) {
 					alert('speed should be a numeric between 1 to 20');
-				}
-				else {
+				} else {
 					validatedSpeed++;
 					this.setSpeed(validatedSpeed);
 				}
-			}
-			else {
+			} else {
 				this.setSpeed(1);
 			}
 		},
 
 		'#minus click': function() {
 			var speed = this.getSpeed();
-			if ( this.validate(speed) ) {
+			if (this.validate(speed)) {
 				var validatedSpeed = Number(speed);
 				if (validatedSpeed <= 1) {
 					alert('speed should be a numeric between 1 to 20');
-				}
-				else {
+				} else {
 					validatedSpeed--;
 					this.setSpeed(validatedSpeed);
 				}
-			}
-			else {
+			} else {
 				this.setSpeed(1);
 			}
 		}

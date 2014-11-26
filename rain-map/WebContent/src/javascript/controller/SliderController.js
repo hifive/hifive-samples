@@ -22,18 +22,24 @@
 		//値が変更されたとき、その値を親に通知
 		'#slider input': function(context, $el) {
 			var value = $el.val();
-			this.trigger('sliderValueChanged', {value: value});
+			this.trigger('sliderValueChanged', {
+				value: value
+			});
 		},
 
 		'#slider change': function(context, $el) {
 			var value = $el.val();
-			this.trigger('sliderValueChanged', {value: value});
+			this.trigger('sliderValueChanged', {
+				value: value
+			});
 		},
 
 		//Sliderのmaxの属性値を指定する
 		_setMax: function(max) {
 			var slider = this.$find('#slider');
-			slider.attr({'max': max});
+			slider.attr({
+				'max': max
+			});
 		},
 
 		//設定されているmaxの値を取得

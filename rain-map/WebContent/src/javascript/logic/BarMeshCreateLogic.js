@@ -16,67 +16,77 @@
 (function($) {
 
 	var SIDELENGTH = 2;
-	var DEFAULTBARMATERIAL1 = new THREE.MeshPhongMaterial({color: 0x19F4FE, overdraw: true});
-	var DEFAULTBARMATERIAL2 = new THREE.MeshPhongMaterial({color: 0xFFA804, overdraw: true});
-	var DEFAULTBARMATERIAL3 = new THREE.MeshPhongMaterial({color: 0xE7001E, overdraw: true});
+	var DEFAULTBARMATERIAL1 = new THREE.MeshPhongMaterial({
+		color: 0x19F4FE,
+		overdraw: true
+	});
+	var DEFAULTBARMATERIAL2 = new THREE.MeshPhongMaterial({
+		color: 0xFFA804,
+		overdraw: true
+	});
+	var DEFAULTBARMATERIAL3 = new THREE.MeshPhongMaterial({
+		color: 0xE7001E,
+		overdraw: true
+	});
 	var THRESHOULD1 = 40;
 	var THRESHOULD2 = 80;
 
 	/**
-	 * 与えられたmeshの重心にバーを表示するためのメッシュを生成するロジック
-	 * valueがデータの値, mapMeshは地図をあらわすメッシュ, materialは棒グラフに張るmaterial, sidelengthは棒グラフの太さ
+	 * 与えられたmeshの重心にバーを表示するためのメッシュを生成するロジック valueがデータの値, mapMeshは地図をあらわすメッシュ,
+	 * materialは棒グラフに張るmaterial, sidelengthは棒グラフの太さ
 	 */
 	var BarMeshCreateLogic = {
 
-			__name: 'geo.BarMeshCreateLogic',
+		__name: 'geo.BarMeshCreateLogic',
 
-			CenterCulculateLogic: geo.CenterCulculateLogic,
-			//VectorLogic: geo.VectorLogic,
+		CenterCulculateLogic: geo.CenterCulculateLogic,
+		//VectorLogic: geo.VectorLogic,
 
-			createBarMesh: function(value, mapMesh) {
+		createBarMesh: function(value, mapMesh) {
 
-				var geometry = new THREE.BoxGeometry(SIDELENGTH, SIDELENGTH, value);
-				var material = DEFAULTBARMATERIAL1;
-				var mesh = new THREE.Mesh(geometry, material);
+			var geometry = new THREE.BoxGeometry(SIDELENGTH, SIDELENGTH, value);
+			var material = DEFAULTBARMATERIAL1;
+			var mesh = new THREE.Mesh(geometry, material);
 
-				//メッシュの重心を計算
-				var centerOfGravity = this.CenterCulculateLogic.culculateCenter(mapMesh.geometry.vertices, mapMesh.geometry.faces);
-				mesh.position.set(centerOfGravity.x, -centerOfGravity.y, centerOfGravity.z + value / 2);
+			//メッシュの重心を計算
+			var centerOfGravity = this.CenterCulculateLogic.culculateCenter(
+					mapMesh.geometry.vertices, mapMesh.geometry.faces);
+			mesh.position.set(centerOfGravity.x, -centerOfGravity.y, centerOfGravity.z + value / 2);
 
-				//角度の計算
-				mesh.rotation.set(mapMesh.rotation.x, mapMesh.rotation.y, mapMesh.rotation.z);
+			//角度の計算
+			mesh.rotation.set(mapMesh.rotation.x, mapMesh.rotation.y, mapMesh.rotation.z);
 
-				return mesh;
-			},
+			return mesh;
+		},
 
-			updateBarMesh: function(newValue, barMesh) {
-				var geometry = new THREE.BoxGeometry(SIDELENGTH, SIDELENGTH, newValue);
-				barMesh.geometry = geometry;
-				barMesh.position.z = newValue / 2 - 1;
+		updateBarMesh: function(newValue, barMesh) {
+			var geometry = new THREE.BoxGeometry(SIDELENGTH, SIDELENGTH, newValue);
+			barMesh.geometry = geometry;
+			barMesh.position.z = newValue / 2 - 1;
 
-				var material = this._selectMeshColor(newValue, THRESHOULD1, THRESHOULD2);
-				barMesh.material = material;
-				return barMesh;
-			},
+			var material = this._selectMeshColor(newValue, THRESHOULD1, THRESHOULD2);
+			barMesh.material = material;
+			return barMesh;
+		},
 
-			_selectMeshColor: function(value, threshould1, threshould2) {
+		_selectMeshColor: function(value, threshould1, threshould2) {
 
-				var th1 = threshould1;
-				var th2 = threshould2;
-				if (threshould1 > threshould2) {
-					th1 = threhould2;
-					th2 = threshould1;
-				}
-
-				var material = DEFAULTBARMATERIAL1;
-				if (th1 < value && value < th2) {
-					material = DEFAULTBARMATERIAL2;
-				} else if (th2 <= value ) {
-					material = DEFAULTBARMATERIAL3;
-				}
-
-				return material;
+			var th1 = threshould1;
+			var th2 = threshould2;
+			if (threshould1 > threshould2) {
+				th1 = threhould2;
+				th2 = threshould1;
 			}
+
+			var material = DEFAULTBARMATERIAL1;
+			if (th1 < value && value < th2) {
+				material = DEFAULTBARMATERIAL2;
+			} else if (th2 <= value) {
+				material = DEFAULTBARMATERIAL3;
+			}
+
+			return material;
+		}
 	};
 
 	h5.core.expose(BarMeshCreateLogic);

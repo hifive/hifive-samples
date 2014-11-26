@@ -29,7 +29,7 @@
 
 			//アイテムの生成
 			var id = '#' + $root[0].id;
-			this.indicatorItem = geo.IndicatorManager.models.IndicatorModel.create( {
+			this.indicatorItem = geo.IndicatorManager.models.IndicatorModel.create({
 				id: id
 			});
 

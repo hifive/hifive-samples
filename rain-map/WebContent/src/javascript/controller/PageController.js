@@ -21,14 +21,6 @@
 
 		__name: 'geo.PageController',
 
-		//子コントローラ
-		MapController: geo.MapController,
-		SliderController: geo.SliderController,
-		DateController: geo.DateController,
-		PlayerButtonController: geo.PlayerButtonController,
-		CameraResetButtonController: geo.CameraResetButtonController,
-		SpeedController: geo.SpeedController,
-
 		__meta: {
 			MapController: {
 				rootElement: '#map'
@@ -49,10 +41,14 @@
 				rootElement: '#speed-controls'
 			}
 		},
-
-		//ロジック
-		_LoadDataFileLogic: geo.LoadDataLogic,
-		_ParseDataFileLogic: null,
+		
+		//子コントローラ
+		MapController: geo.MapController,
+		SliderController: geo.SliderController,
+		DateController: geo.DateController,
+		PlayerButtonController: geo.PlayerButtonController,
+		CameraResetButtonController: geo.CameraResetButtonController,
+		SpeedController: geo.SpeedController,
 
 		//読み込んだデータ
 		_data: null,
@@ -68,67 +64,83 @@
 
 			var params = context.args;
 			if (!params.geoDataURL) {
-				console.log('geoDataURL is not defined');
+				console.error('geoDataURL is not defined');
 				return;
 			}
 
 			if (!params.dataURL) {
-				console.log('dataURL is not defined');
+				console.error('dataURL is not defined');
 				return;
 			}
 
-			if (!params.ParseDataFileLogic) {
-				console.log('ParseDataFileLogic is not defined');
+			if (!params.parseCSVDataLogic) {
+				console.error('ParseCSVDataLogic is not defined');
 				return;
 			}
 
-			this.loadDataFile(params.ParseDataFileLogic, params.dataURL, params.jsonURL);
+			this.loadDataFile(params.parseCSVDataLogic, params.dataURL);
 		},
 
 		//logic: dataURLのファイルから取得するデータをparseするロジック
 		//jsonURL:MapKeyとDataKeyの対応を表すJSONのURL
-		loadDataFile: function(logic, dataURL, jsonURL) {
+		loadDataFile: function(logic, dataURL) {
 
 			//ParseDataFileLogicをロジック化して保持
-			this._ParseDataFileLogic = h5.core.logic(logic);
+			var parseCSVDataLogic = h5.core.logic(logic);
 
 			//ファイルを読む
-			var fileText = this._LoadDataFileLogic.loadData(dataURL);
-			this._ParseDataFileLogic.getParsedData(fileText).done(this.own(function(data) {
-				this._data = data;
-				this._indexDateArray = Object.keys(this._data);
-				this.SliderController.initSlider(this._indexDateArray.length - 1);
+			$.ajax({
+				async: true,
+				url: dataURL,
+				success: this.own(function(rowTextData, dataType) {
 
-				console.log('Load data successfully.');
-			})).fail(function() {
-				console.log('Load data - failed');
+					parseCSVDataLogic.getParsedData(rowTextData)
+					.done(this.own(function(parsedData) {
+							
+						if (!parsedData['dateArray'] || !parsedData['areaValueObjectArray']) {
+							console.error('Invalid Data Format');
+							return;
+						}
+
+						this._indexDateArray = parsedData.dateArray;
+						this._data = parsedData.areaValueObjectArray;
+
+						this.SliderController.initSlider(this._indexDateArray.length - 1);
+
+					})).fail(function() {
+						console.error('Load Data - Failed');
+					});
+
+				}), 
+				error: function(xhr, error) {
+					console.error(error);
+				}
 			});
 		},
 
 		//Sliderの値が変化した際に呼ばれるイベント
 		'#slider-container sliderValueInput': function(context) {
 			//子コントローラから投げられた値を取得しdateに変換
-			var value = context.evArg.value;
-			var date = this._indexDateArray[value];
-
+			var value = Number(context.evArg.value);
+			
 			//div#dateに日付を表示
+			var date = this._indexDateArray[value];			
 			this.DateController.setDate(date);
 
 			//MapControllerにデータを渡して棒グラフを変化させる
-			var data = this._data[date];
-			this.MapController.updateBars(data);
+			var areaValueData = this._data[value];
+			this.MapController.updateBars(areaValueData);
 		},
 
 		'#slider-container sliderValueChanged': function(context) {
 
-			var value = context.evArg.value;
+			var value = Number(context.evArg.value);
+			
 			var date = this._indexDateArray[value];
-
 			this.DateController.setDate(date);
-			var data = this._data[date];
-			this.MapController.updateBars(data);
-
-
+			
+			var areaValueData = this._data[value];
+			this.MapController.updateBars(areaValueData);
 		},
 
 		//カメラの位置と向きをリセット
@@ -221,7 +233,7 @@ $(function() {
 		geoDataURL: 'res/data/map/jpn.json',
 		dataURL: 'res/data/precipitation/precipitation_jpn.csv',
 		mapKeyProps: ['prefecture', 'area'],
-		ParseDataFileLogic: geo.ParseDataFileLogic
+		parseCSVDataLogic: geo.ParseCSVDataLogic
 	};
 	h5.core.controller('#map-control', geo.PageController, params);
 });

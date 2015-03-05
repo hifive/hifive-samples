@@ -31,6 +31,26 @@
 	var THRESHOULD1 = 40;
 	var THRESHOULD2 = 80;
 
+	var selectMeshColor = function(value, threshould1, threshould2) {
+
+		var th1 = threshould1;
+		var th2 = threshould2;
+		if (threshould1 > threshould2) {
+			th1 = threhould2;
+			th2 = threshould1;
+		}
+
+		var material = DEFAULTBARMATERIAL1;
+		if (th1 < value && value < th2) {
+			material = DEFAULTBARMATERIAL2;
+		} else if (th2 <= value) {
+			material = DEFAULTBARMATERIAL3;
+		}
+
+		return material;
+	};
+
+
 	/**
 	 * 与えられたmeshの重心にバーを表示するためのメッシュを生成するロジック valueがデータの値, mapMeshは地図をあらわすメッシュ,
 	 * materialは棒グラフに張るmaterial, sidelengthは棒グラフの太さ
@@ -64,28 +84,9 @@
 			barMesh.geometry = geometry;
 			barMesh.position.z = newValue / 2 - 1;
 
-			var material = this._selectMeshColor(newValue, THRESHOULD1, THRESHOULD2);
+			var material = selectMeshColor(newValue, THRESHOULD1, THRESHOULD2);
 			barMesh.material = material;
 			return barMesh;
-		},
-
-		_selectMeshColor: function(value, threshould1, threshould2) {
-
-			var th1 = threshould1;
-			var th2 = threshould2;
-			if (threshould1 > threshould2) {
-				th1 = threhould2;
-				th2 = threshould1;
-			}
-
-			var material = DEFAULTBARMATERIAL1;
-			if (th1 < value && value < th2) {
-				material = DEFAULTBARMATERIAL2;
-			} else if (th2 <= value) {
-				material = DEFAULTBARMATERIAL3;
-			}
-
-			return material;
 		}
 	};
 

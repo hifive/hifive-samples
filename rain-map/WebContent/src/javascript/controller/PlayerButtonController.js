@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 (function($) {
+	
 	var PLAYBUTTONSELECTOR = '#play-button';
 	var PAUSEBUTTONSELECTOR = '#pause-button';
 
@@ -23,7 +24,6 @@
 	var PlayerButtonController = {
 
 		__name: 'geo.PlayerButtonController',
-
 
 		'{rootElement} click': function(context, $el) {
 			this.trigger('playerClicked', null);

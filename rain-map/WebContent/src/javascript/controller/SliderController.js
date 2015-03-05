@@ -22,7 +22,7 @@
 		//値が変更されたとき、その値を親に通知
 		'#slider input': function(context, $el) {
 			var value = $el.val();
-			this.trigger('sliderValueChanged', {
+			this.trigger('sliderValueInput', {
 				value: value
 			});
 		},
@@ -35,7 +35,7 @@
 		},
 
 		//Sliderのmaxの属性値を指定する
-		_setMax: function(max) {
+		setMax: function(max) {
 			var slider = this.$find('#slider');
 			slider.attr({
 				'max': max
@@ -52,7 +52,8 @@
 		//SliderのValueを更新する。
 		setValue: function(value) {
 			var slider = this.$find('#slider');
-			slider.val(value).change();
+			slider.val(value);
+			slider.trigger('input');
 		},
 
 		//現在のvalueを取得
@@ -63,7 +64,7 @@
 		},
 
 		initSlider: function(max) {
-			this._setMax(max);
+			this.setMax(max);
 			this.setValue(0);
 		}
 	};

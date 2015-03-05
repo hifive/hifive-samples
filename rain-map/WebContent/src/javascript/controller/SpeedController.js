@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 (function($) {
+
+	//正規表現で
+	var speedExpressionChecker = new RegExp('^(20)|(1[0-9])|([1-9])');
+
 	/**
 	 * 再生速度を調整するコントローラ
 	 */
 	var SpeedController = {
 
 		__name: 'geo.SpeedController',
-
-		//速度は1から20まで
-		_REGEXP: new RegExp('^(20)|(1[0-9])|([1-9])'),
 
 		'{rootElement} change': function() {
 			var speed = this.getSpeed();
@@ -53,7 +54,7 @@
 				value = value.toString();
 			}
 
-			var index = value.search(this._REGEXP);
+			var index = value.search(speedExpressionChecker);
 			if (index === -1) {
 				return false;
 			} else {

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 (function($) {
-	var PLAYBUTTONSELECTOR = '#playButton';
-	var PAUSEBUTTONSELECTOR = '#pauseButton';
+	var PLAYBUTTONSELECTOR = '#play-button';
+	var PAUSEBUTTONSELECTOR = '#pause-button';
 
 	/**
 	 * Playerのボタン

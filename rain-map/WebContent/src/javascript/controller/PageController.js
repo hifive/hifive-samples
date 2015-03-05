@@ -14,6 +14,51 @@
  * limitations under the License.
  */
 (function($) {
+
+	//privateプロパティ
+	var _data = null;
+	var _indexDateArray = null;
+	var _playID = null;
+
+	//時系列データを再生する
+	var _play = function() {
+
+		//Speedを取得
+		var speed = this.SpeedController.getSpeed();
+		var interval = 1000 / speed;
+
+		//現在のmaxとvalueを取得
+		var value = parseInt(this.SliderController.getValue());
+		var max = parseInt(this.SliderController.getMax());
+
+		//既に再生しきっている場合は、0から再生
+		if (max <= value) {
+			value = 0;
+			this.SliderController.setValue(value);
+		}
+
+		var f = this.own(function() {
+
+			if (max <= value) {
+				_pause(_playID);
+				return;
+			}
+
+			this.SliderController.setValue(++value);
+		});
+
+		this.PlayerButtonController.switchButtonImage(true);
+		_playID = setInterval(f, interval);
+
+	};
+
+	//停止
+	var _pause = function() {
+		this.PlayerButtonController.switchButtonImage(false);
+		clearInterval(_playID);
+		_playID = null;
+	};
+
 	/**
 	 * parse後のデータは次の形式とする。 { date1: {MapKey1: value1, MapKey2: value2,....} date2: {MapKey1: ... }
 	 */
@@ -49,16 +94,6 @@
 		PlayerButtonController: geo.PlayerButtonController,
 		CameraResetButtonController: geo.CameraResetButtonController,
 		SpeedController: geo.SpeedController,
-
-		//読み込んだデータ
-		_data: null,
-
-		//Sliderの値と、dateを対応付ける配列
-		_indexDateArray: null,
-
-		//再生タイマーのID
-		_playID: null,
-
 
 		__ready: function(context) {
 
@@ -102,10 +137,8 @@
 							return;
 						}
 
-						this._indexDateArray = parsedData.dateArray;
-						this._data = parsedData.areaValueObjectArray;
-
-						this.SliderController.initSlider(this._indexDateArray.length - 1);
+						_indexDateArray = parsedData.dateArray;
+						_data = parsedData.areaValueObjectArray;
 
 					})).fail(function() {
 						console.error('Load Data - Failed');
@@ -124,11 +157,11 @@
 			var value = Number(context.evArg.value);
 			
 			//div#dateに日付を表示
-			var date = this._indexDateArray[value];			
+			var date = _indexDateArray[value];			
 			this.DateController.setDate(date);
 
 			//MapControllerにデータを渡して棒グラフを変化させる
-			var areaValueData = this._data[value];
+			var areaValueData =_data[value];
 			this.MapController.updateBars(areaValueData);
 		},
 
@@ -136,10 +169,10 @@
 
 			var value = Number(context.evArg.value);
 			
-			var date = this._indexDateArray[value];
+			var date = _indexDateArray[value];
 			this.DateController.setDate(date);
 			
-			var areaValueData = this._data[value];
+			var areaValueData = _data[value];
 			this.MapController.updateBars(areaValueData);
 		},
 
@@ -150,12 +183,10 @@
 
 		//プレイヤーのボタン
 		'#play-button-container playerClicked': function() {
-			if (this._playID === null) {
-				var speed = this.SpeedController.getSpeed();
-				var interval = 1000 / speed;
-				this.play(interval);
+			if (_playID === null) {
+				this.own(_play)();
 			} else {
-				this.pause();
+				this.own(_pause)();
 			}
 		},
 
@@ -163,7 +194,7 @@
 		'#date dateChanged': function(context) {
 			//入力されたテキストをvalueとしてindexDateArrayからindexを計算
 			var text = context.evArg.date;
-			var index = this._indexDateArray.indexOf(text);
+			var index = _indexDateArray.indexOf(text);
 			if (index !== -1) {
 				this.SliderController.setValue(index);
 			} else {
@@ -174,51 +205,20 @@
 		//Speedが変化した際に呼ばれる
 		'#speed-controls speedChanged': function(context) {
 
-			if (this._playID === null) {
+			if (_playID === null) {
 				return;
 			}
 
-			var speed = context.evArg.speed;
-			var interval = 1000 / speed;
-			this.pause();
-			this.play(interval);
+			this.own(_pause)();
+			this.own(_play)();
 		},
 
-		//時系列データを再生する
-		play: function(interval) {
-
-			//現在のmaxとvalueを取得
-			var value = parseInt(this.SliderController.getValue());
-			var max = parseInt(this.SliderController.getMax());
-
-			//既に再生しきっている場合は、0から再生
-			if (max <= value) {
-				value = 0;
-				this.SliderController.setValue(value);
-			}
-
-			var that = this;
-			var f = function() {
-
-				if (max <= value) {
-					that.own(that.pause(that._playID));
-					return;
-				}
-
-				that.SliderController.setValue(++value);
-			};
-
-			this.PlayerButtonController.switchButtonImage(true);
-			this._playID = setInterval(f, interval);
-
-		},
-
-		//停止
-		pause: function() {
-			this.PlayerButtonController.switchButtonImage(false);
-			clearInterval(this._playID);
-			this._playID = null;
+		//Mapのセットアップ完了時に呼ばれる．スライダを初期化する
+		'#map MapSetUpCompleted': function() {
+			this.SliderController.initSlider(_indexDateArray.length - 1);
 		}
+
+
 
 	};
 

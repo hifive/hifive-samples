@@ -15,25 +15,25 @@
  */
 (function($) {
 
-	var indicatorHandler = null;
+	var _indicatorHandler = null;
 
 	var IndicatorController = {
 
 		__name: 'geo.IndicatorController',
 
 		__ready: function(context) {
-			indicatorHandler = this.indicator({});
+			_indicatorHandler = this.indicator({});
 		},
 
 		showIndicator: function() {
-			indicatorHandler.show();
+			_indicatorHandler.show();
 			this.updateIndicator(0);
 		},
 
 		updateIndicator: function(value) {
-			indicatorHandler.percent(value);
+			_indicatorHandler.percent(value);
 			if (value >= 100) {
-				indicatorHandler.hide();
+				_indicatorHandler.hide();
 			}
 		}
 

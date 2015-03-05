@@ -16,7 +16,7 @@
 (function($) {
 
 	//正規表現で
-	var speedExpressionChecker = new RegExp('^(20)|(1[0-9])|([1-9])');
+	var _speedExpressionChecker = new RegExp('^(20)|(1[0-9])|([1-9])');
 
 	/**
 	 * 再生速度を調整するコントローラ
@@ -54,7 +54,7 @@
 				value = value.toString();
 			}
 
-			var index = value.search(speedExpressionChecker);
+			var index = value.search(_speedExpressionChecker);
 			if (index === -1) {
 				return false;
 			} else {

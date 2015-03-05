@@ -31,7 +31,7 @@
 	var THRESHOULD1 = 40;
 	var THRESHOULD2 = 80;
 
-	var selectMeshColor = function(value, threshould1, threshould2) {
+	var _selectMeshColor = function(value, threshould1, threshould2) {
 
 		var th1 = threshould1;
 		var th2 = threshould2;
@@ -84,7 +84,7 @@
 			barMesh.geometry = geometry;
 			barMesh.position.z = newValue / 2 - 1;
 
-			var material = selectMeshColor(newValue, THRESHOULD1, THRESHOULD2);
+			var material = _selectMeshColor(newValue, THRESHOULD1, THRESHOULD2);
 			barMesh.material = material;
 			return barMesh;
 		}

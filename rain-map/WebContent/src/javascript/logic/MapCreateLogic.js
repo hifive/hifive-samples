@@ -20,9 +20,14 @@
 	var SCALE = 1000;
 
 	//生成するgeometryの厚み
-	var AMOUNT = 1;
+	var AMOUNT = 2;
 
-	var path = function(feature) {
+	//地図データを読み込むURL
+	var _url = null;
+	var _keyProps = null;
+
+
+	var _path = function(feature) {
 		//地図の設定
 		//記法はメルカトル
 		var mercator = d3.geo.mercator();
@@ -36,24 +41,9 @@
 		return pathFunction(feature);
 	};
 
-	//指定したプロパティの値一覧を作成
-	var makePropertyValueList = function(features, property) {
-
-		var propertyValueList = new Array();
-		for (var i = 0; i < features.length; i++) {
-			var value = features[i].properties[property];
-			if (propertyValueList.indexOf(value) === -1) {
-				propertyValueList.push(value);
-			}
-		}
-
-		return propertyValueList;
-	};
-
-
 	//featureとkeyにしたいプロパティ名を渡すことで
 	//_で連結した文字列をキーとして作成します。
-	var makeMapKey = function(feature, keyProps, featureIndex) {
+	var _makeMapKey = function(feature, keyProps) {
 
 		var key;
 		if (typeof keyProps === 'string') {
@@ -69,18 +59,14 @@
 			}
 		}
 
-		else {
-			key = featureIndex;
-		}
-
 		return key;
 	};
 
 	//GeoJSONのfeature1つからmeshを生成
-	var fromFeatureToMesh = function(feature, index) {
+	var _fromFeatureToMesh = function(feature) {
 
 		//d3.jsを用いてGeoJSONのfeaturesからSVG Pathを生成
-		var svgPath = path(feature);
+		var svgPath = _path(feature);
 
 		//d3-threeD.jsを用いてSVG Pathからshapeを生成
 		var shapes = $d3g.transformSVGPath(svgPath);
@@ -103,26 +89,18 @@
 	//key=>geometryの連想配列にする場合
 	//keyはGeoJSON中のprefecture_area
 	//propで指定したプロパティの値が同じものを同じ色のメッシュにする
-	var makeMeshHashMap = function(features, keyProps, prop) {
-
-		//prefectureを元に県のリスト一覧を作成
-		var propertyValueList = makePropertyValueList(features, prop);
+	var _makeMeshHashMap = function(features, keyProps) {
 
 		var meshHashMap = {};
 		for (var i = 0; i < features.length; i++) {
 
-			//Indicatorの値を更新
-			var percentage = Math.round(30 * i / features.length);
-
 			//featureを取得してmeshに変換
 			var feature = features[i];
-			var propValue = feature.properties[prop];
-			var index = propertyValueList.indexOf(propValue);
-			var mesh = fromFeatureToMesh(feature, index);
+			var mesh = _fromFeatureToMesh(feature);
 			mesh.rotation.x = -Math.PI;
 
 			//keyはnum_areaの形式
-			var mapKey = makeMapKey(feature, keyProps, i);
+			var mapKey = _makeMapKey(feature, keyProps);
 			meshHashMap[mapKey] = mesh;
 		}
 		return meshHashMap;
@@ -136,28 +114,35 @@
 
 		__name: 'geo.MapCreateLogic',
 
+
+		setMapParams: function(url, keyProps) {
+			_url = url;
+			_keyProps = keyProps;
+		}, 
+
 		//引数で指定したプロパティとともにmeshを生成します。
 		//keyPropsに指定したプロパティを_で連結したものをkeyとして
 		//key=>meshのハッシュ形式で読み込みます。
-		//またpropの値が同じ要素を同じ色のメッシュにします。
-		loadMapData: function(url, keyProps, prop, indicatorItem) {
+		loadMapData: function() {
 
 			var deferred = this.deferred();
 
 			//データの読み込み
-			jQuery.getJSON(url, this.own(function(geoDataObject) {
+			jQuery.getJSON(_url, this.own(function(geoDataObject) {
 				var features = geoDataObject.features;
-				var meshHashMap = makeMeshHashMap(features, keyProps, prop, indicatorItem);
+				var meshHashMap = _makeMeshHashMap(features, _keyProps);
 				deferred.resolve(meshHashMap);
 			}))
 			//読み込み失敗時の処理
 			.fail(function(jqXHR, textStatus, errorThrown) {
 				console.error('Load Data - Failed');
-				deferred.resolve(null);
+				deferred.reject(errorThrown);
 			});
 
 			return deferred.promise();
-		}
+		}, 
+
+		
 	};
 
 	//ロジックを公開する

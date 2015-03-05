@@ -139,6 +139,10 @@
 
 						_indexDateArray = parsedData.dateArray;
 						_data = parsedData.areaValueObjectArray;
+						if (_indexDateArray) {
+							this.SliderController.initSlider(_indexDateArray.length - 1);
+						}	
+
 
 					})).fail(function() {
 						console.error('Load Data - Failed');
@@ -152,7 +156,7 @@
 		},
 
 		//Sliderの値が変化した際に呼ばれるイベント
-		'#slider-container sliderValueInput': function(context) {
+		'#slider-container SliderValueInput': function(context) {
 			//子コントローラから投げられた値を取得しdateに変換
 			var value = Number(context.evArg.value);
 			
@@ -162,17 +166,6 @@
 
 			//MapControllerにデータを渡して棒グラフを変化させる
 			var areaValueData =_data[value];
-			this.MapController.updateBars(areaValueData);
-		},
-
-		'#slider-container sliderValueChanged': function(context) {
-
-			var value = Number(context.evArg.value);
-			
-			var date = _indexDateArray[value];
-			this.DateController.setDate(date);
-			
-			var areaValueData = _data[value];
 			this.MapController.updateBars(areaValueData);
 		},
 
@@ -215,7 +208,9 @@
 
 		//Mapのセットアップ完了時に呼ばれる．スライダを初期化する
 		'#map MapSetUpCompleted': function() {
-			this.SliderController.initSlider(_indexDateArray.length - 1);
+			if (_indexDateArray) {
+				this.SliderController.initSlider(_indexDateArray.length - 1);
+			}	
 		}
 
 

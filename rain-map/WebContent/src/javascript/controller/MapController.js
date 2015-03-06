@@ -271,7 +271,7 @@
 
 		//カメラをデフォルトの位置と向きに戻す
 		resetCamera: function() {
-			_initCamera();
+			this.own(_initCamera)();
 		}
 
 	};

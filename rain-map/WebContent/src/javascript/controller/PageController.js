@@ -14,20 +14,57 @@
  * limitations under the License.
  */
 (function($) {
+
+	//privateプロパティ
+	var _data = null;
+	var _indexDateArray = null;
+	var _playID = null;
+
+	//時系列データを再生する
+	var _play = function() {
+
+		//Speedを取得
+		var speed = this.SpeedController.getSpeed();
+		var interval = 1000 / speed;
+
+		//現在のmaxとvalueを取得
+		var value = parseInt(this.SliderController.getValue());
+		var max = parseInt(this.SliderController.getMax());
+
+		//既に再生しきっている場合は、0から再生
+		if (max <= value) {
+			value = 0;
+			this.SliderController.setValue(value);
+		}
+
+		var f = this.own(function() {
+
+			if (max <= value) {
+				_pause(_playID);
+				return;
+			}
+
+			this.SliderController.setValue(++value);
+		});
+
+		this.PlayerButtonController.switchButtonImage(true);
+		_playID = setInterval(f, interval);
+
+	};
+
+	//停止
+	var _pause = function() {
+		this.PlayerButtonController.switchButtonImage(false);
+		clearInterval(_playID);
+		_playID = null;
+	};
+
 	/**
 	 * parse後のデータは次の形式とする。 { date1: {MapKey1: value1, MapKey2: value2,....} date2: {MapKey1: ... }
 	 */
 	var PageController = {
 
 		__name: 'geo.PageController',
-
-		//子コントローラ
-		MapController: geo.MapController,
-		SliderController: geo.SliderController,
-		DateController: geo.DateController,
-		PlayerButtonController: geo.PlayerButtonController,
-		CameraResetButtonController: geo.CameraResetButtonController,
-		SpeedController: geo.SpeedController,
 
 		__meta: {
 			MapController: {
@@ -49,86 +86,87 @@
 				rootElement: '#speed-controls'
 			}
 		},
-
-		//ロジック
-		_LoadDataFileLogic: geo.LoadDataLogic,
-		_ParseDataFileLogic: null,
-
-		//読み込んだデータ
-		_data: null,
-
-		//Sliderの値と、dateを対応付ける配列
-		_indexDateArray: null,
-
-		//再生タイマーのID
-		_playID: null,
-
+		
+		//子コントローラ
+		MapController: geo.MapController,
+		SliderController: geo.SliderController,
+		DateController: geo.DateController,
+		PlayerButtonController: geo.PlayerButtonController,
+		CameraResetButtonController: geo.CameraResetButtonController,
+		SpeedController: geo.SpeedController,
 
 		__ready: function(context) {
 
 			var params = context.args;
 			if (!params.geoDataURL) {
-				console.log('geoDataURL is not defined');
+				console.error('geoDataURL is not defined');
 				return;
 			}
 
 			if (!params.dataURL) {
-				console.log('dataURL is not defined');
+				console.error('dataURL is not defined');
 				return;
 			}
 
-			if (!params.ParseDataFileLogic) {
-				console.log('ParseDataFileLogic is not defined');
+			if (!params.parseCSVDataLogic) {
+				console.error('ParseCSVDataLogic is not defined');
 				return;
 			}
 
-			this.loadDataFile(params.ParseDataFileLogic, params.dataURL, params.jsonURL);
+			this.loadDataFile(params.parseCSVDataLogic, params.dataURL);
 		},
 
 		//logic: dataURLのファイルから取得するデータをparseするロジック
 		//jsonURL:MapKeyとDataKeyの対応を表すJSONのURL
-		loadDataFile: function(logic, dataURL, jsonURL) {
+		loadDataFile: function(logic, dataURL) {
 
 			//ParseDataFileLogicをロジック化して保持
-			this._ParseDataFileLogic = h5.core.logic(logic);
+			var parseCSVDataLogic = h5.core.logic(logic);
 
 			//ファイルを読む
-			var fileText = this._LoadDataFileLogic.loadData(dataURL);
-			this._ParseDataFileLogic.getParsedData(fileText).done(this.own(function(data) {
-				this._data = data;
-				this._indexDateArray = Object.keys(this._data);
-				this.SliderController.initSlider(this._indexDateArray.length - 1);
+			$.ajax({
+				async: true,
+				url: dataURL,
+				success: this.own(function(rowTextData, dataType) {
 
-				console.log('Load data successfully.');
-			})).fail(function() {
-				console.log('Load data - failed');
+					parseCSVDataLogic.getParsedData(rowTextData)
+					.done(this.own(function(parsedData) {
+							
+						if (!parsedData['dateArray'] || !parsedData['areaValueObjectArray']) {
+							console.error('Invalid Data Format');
+							return;
+						}
+
+						_indexDateArray = parsedData.dateArray;
+						_data = parsedData.areaValueObjectArray;
+						if (_indexDateArray) {
+							this.SliderController.initSlider(_indexDateArray.length - 1);
+						}	
+
+
+					})).fail(function() {
+						console.error('Load Data - Failed');
+					});
+
+				}), 
+				error: function(xhr, error) {
+					console.error(error);
+				}
 			});
 		},
 
 		//Sliderの値が変化した際に呼ばれるイベント
-		'#slider-container sliderValueInput': function(context) {
+		'#slider-container SliderValueInput': function(context) {
 			//子コントローラから投げられた値を取得しdateに変換
-			var value = context.evArg.value;
-			var date = this._indexDateArray[value];
-
+			var value = Number(context.evArg.value);
+			
 			//div#dateに日付を表示
+			var date = _indexDateArray[value];			
 			this.DateController.setDate(date);
 
 			//MapControllerにデータを渡して棒グラフを変化させる
-			var data = this._data[date];
-			this.MapController.updateBars(data);
-		},
-
-		'#slider-container sliderValueChanged': function(context) {
-
-			var value = context.evArg.value;
-			var date = this._indexDateArray[value];
-
-			this.DateController.setDate(date);
-			var data = this._data[date];
-			this.MapController.updateBars(data);
-
-
+			var areaValueData =_data[value];
+			this.MapController.updateBars(areaValueData);
 		},
 
 		//カメラの位置と向きをリセット
@@ -138,12 +176,10 @@
 
 		//プレイヤーのボタン
 		'#play-button-container playerClicked': function() {
-			if (this._playID === null) {
-				var speed = this.SpeedController.getSpeed();
-				var interval = 1000 / speed;
-				this.play(interval);
+			if (_playID === null) {
+				this.own(_play)();
 			} else {
-				this.pause();
+				this.own(_pause)();
 			}
 		},
 
@@ -151,7 +187,7 @@
 		'#date dateChanged': function(context) {
 			//入力されたテキストをvalueとしてindexDateArrayからindexを計算
 			var text = context.evArg.date;
-			var index = this._indexDateArray.indexOf(text);
+			var index = _indexDateArray.indexOf(text);
 			if (index !== -1) {
 				this.SliderController.setValue(index);
 			} else {
@@ -162,51 +198,22 @@
 		//Speedが変化した際に呼ばれる
 		'#speed-controls speedChanged': function(context) {
 
-			if (this._playID === null) {
+			if (_playID === null) {
 				return;
 			}
 
-			var speed = context.evArg.speed;
-			var interval = 1000 / speed;
-			this.pause();
-			this.play(interval);
+			this.own(_pause)();
+			this.own(_play)();
 		},
 
-		//時系列データを再生する
-		play: function(interval) {
-
-			//現在のmaxとvalueを取得
-			var value = parseInt(this.SliderController.getValue());
-			var max = parseInt(this.SliderController.getMax());
-
-			//既に再生しきっている場合は、0から再生
-			if (max <= value) {
-				value = 0;
-				this.SliderController.setValue(value);
-			}
-
-			var that = this;
-			var f = function() {
-
-				if (max <= value) {
-					that.own(that.pause(that._playID));
-					return;
-				}
-
-				that.SliderController.setValue(++value);
-			};
-
-			this.PlayerButtonController.switchButtonImage(true);
-			this._playID = setInterval(f, interval);
-
-		},
-
-		//停止
-		pause: function() {
-			this.PlayerButtonController.switchButtonImage(false);
-			clearInterval(this._playID);
-			this._playID = null;
+		//Mapのセットアップ完了時に呼ばれる．スライダを初期化する
+		'#map MapSetUpCompleted': function() {
+			if (_indexDateArray) {
+				this.SliderController.initSlider(_indexDateArray.length - 1);
+			}	
 		}
+
+
 
 	};
 
@@ -221,7 +228,7 @@ $(function() {
 		geoDataURL: 'res/data/map/jpn.json',
 		dataURL: 'res/data/precipitation/precipitation_jpn.csv',
 		mapKeyProps: ['prefecture', 'area'],
-		ParseDataFileLogic: geo.ParseDataFileLogic
+		parseCSVDataLogic: geo.ParseCSVDataLogic
 	};
 	h5.core.controller('#map-control', geo.PageController, params);
 });

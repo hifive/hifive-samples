@@ -14,6 +14,162 @@
  * limitations under the License.
  */
 (function($) {
+
+	//requestAnimationFrameが使えるか確認
+	var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || 
+	function(func) {
+		window.setTimeout(func, 15);
+	};
+
+	//TracjballControlsのコンストラクタ
+	var TrackballControls = THREE.TrackballControls;
+
+
+	//カメラの初期パラメータ
+	var DEFAULTCAMERAPOS = new THREE.Vector3(10, -120, 150);
+	var DEFAULTCAMERALOOKAT = new THREE.Vector3(0, 0, 0);
+
+	//プライベートプロパティ
+	var _mapData = null;
+	var _barData = null;
+	
+	//地図のTHREEJSオブジェクト
+	var _scene = null;
+	var _camera = null;
+	var _renderer = null;
+	var _controls = null;
+
+	//this.ownでthisをバインドして使用する
+	var _initCamera = function() {
+
+		// 表示領域の横と縦はバインドされた要素の大きさとする
+		var $root = $(this.rootElement);
+		var width = $root.width();
+		var height = $root.height();
+
+		// cameraの設定
+		// 視野の広さ(縦)
+		var fieldOfView = 70;
+		
+		// 撮影領域の縦横比
+		var aspect = width / height;
+		
+		// 撮影範囲
+		var near = 10;
+		var far = 10000;
+		
+		_camera = new THREE.PerspectiveCamera(fieldOfView, aspect, near, far);
+		_camera.position.set(DEFAULTCAMERAPOS.x, DEFAULTCAMERAPOS.y, DEFAULTCAMERAPOS.z);
+		_camera.lookAt(DEFAULTCAMERALOOKAT);
+
+		// トラックコントロールできるようにする
+		_controls = new TrackballControls(_camera, this.rootElement);
+	};
+
+	// ライトの初期設定
+	var _initLight = function() {
+		var directionLight = new THREE.DirectionalLight(0xffffff, 2);
+		directionLight.position.set(200, -200, 200).normalize();
+		_scene.add(directionLight);
+	};
+
+	// レンダラの初期化
+	var _initRenderer = function() {
+
+		var $root = $(this.rootElement);
+		var width = $root.width();
+		var height = $root.height();
+
+		_renderer = THREE.WebGLRenderer ? new THREE.WebGLRenderer({	antialias: true}) : new THREE.CanavsRenderer();
+		
+		// 背景を白くする
+		_renderer.setClearColor(new THREE.Color(0xffffff));
+		// 描画領域のサイズはバインドされた要素のサイズ
+		_renderer.setSize(width, height);
+		// バインドされた要素にcanvasを追加
+		$root.append(_renderer.domElement);
+	};
+
+	// レンダリングするメソッド
+	var _render = function() {
+		_controls.update();
+		_renderer.render(_scene, _camera);
+	};
+
+	// scene, camera, renderer, lightの初期化
+	var _init = function() {
+
+		// ここでルートエレメントを保存しておく
+		var $root = $(this.rootElement);
+
+		// シーンの作成
+		_scene = new THREE.Scene();
+
+		// カメラの初期化
+		this.own(_initCamera)();
+
+		// ライトの初期化
+		_initLight();
+
+		// レンダラの初期化
+		this.own(_initRenderer)();
+
+		// 地図を読み込んで描画
+		this.setUpMap();
+	};
+
+	// 棒グラフのメッシュデータを作成
+	var _createBarData = function() {
+
+		_barData = {};
+		for ( var key in _mapData) {
+
+			// areaがnullかislandのものはスキップ
+			var area = key.split('_')[1];
+			if (!area || area === 'null' || area === 'island') {
+				continue;
+			}
+
+			var mapMesh = _mapData[key];
+			
+			var sidelength = 2;
+			_barData[key] = this.BarMeshCreateLogic.createBarMesh(5, mapMesh, sidelength);
+		}
+	};
+
+
+	// 地図のメッシュをsceneに追加
+	var _addMap = function() {
+
+		// meshを作成しsceneに配置
+		for ( var key in _mapData) {
+			var mesh = _mapData[key];
+			var edge = new THREE.EdgesHelper(mesh, '#FFF');
+			_scene.add(mesh);
+			_scene.add(edge);
+		}
+	};
+
+	// 棒グラフのメッシュをsceneに追加
+	var _addBars = function() {
+		for ( var key in _barData) {
+			var bar = _barData[key];
+			_scene.add(bar);
+		}
+	};
+
+	// 準備が整ったときに一回だけ呼ぶ
+	var _renderAuto = function() {
+
+		var f = function() {
+			_render();
+			requestAnimationFrame(f);
+		};
+
+		f();
+	};
+
+
 	/**
 	 * バインドした要素にMapを描画するコントローラ パラメータは次の通り { geoDataURL: GeoJSONファイルのURL, }
 	 */
@@ -21,277 +177,101 @@
 
 		__name: 'geo.MapController',
 
-		/**
-		 * 使用するロジック
-		 */
-		// meshの作成に利用するロジック
+		//ロジック
 		MapCreateLogic: geo.MapCreateLogic,
-
-		// 棒グラフの作成に利用するロジック
 		BarMeshCreateLogic: geo.BarMeshCreateLogic,
 
-		/**
-		 * コントローラ
-		 */
-		// インジケータを操作するコントローラ
+		//コントローラ
 		IndicatorController: geo.IndicatorController,
-
-		/**
-		 * プロパティ
-		 */
-		// デフォルトのカメラの位置と向き
-		DEFAULTCAMERAPOS: new THREE.Vector3(10, -120, 150),
-		DEFAULTCAMERALOOKAT: new THREE.Vector3(0, 0, 0),
-
-		// 各種描画に必要なコンポーネント
-		scene: null,
-		camera: null,
-		renderer: null,
-		controls: null,
-
-		// 読み込んだ地図情報
-		_mapData: null,
-
-		//MapKey
-		_mapKeyProps: null,
-
-		// 棒グラフの情報
-		_barData: null,
 
 		/**
 		 * メソッド
 		 */
-		_trackballControls: THREE.TrackballControls,
-
 		__ready: function(context) {
 
-			// MapDataのURLがなけれ終了
+			// 必要なパラメータの受け取り
 			var geoDataURL = context.args.geoDataURL;
-			if (!geoDataURL) {
+			var mapKeyProps = context.args.mapKeyProps;
+			if (!geoDataURL || !mapKeyProps) {
 				return;
 			}
 
-			//MapKeyの指定がなければ終了
-			this._mapKeyProps = context.args.mapKeyProps;
-			if (!this._mapKeyProps) {
-				return;
-			}
+			//MapCreateLogicにパラメータを渡す．
+			this.MapCreateLogic.setMapParams(geoDataURL, mapKeyProps);
 
 			// インジケータの初期化
 			this.IndicatorController.showIndicator();
-			this.IndicatorController.indicatorItem.set('percent', 0);
 
 			// 地図のセットアップ
-			this._init(geoDataURL);
-		},
-
-		// scene, camera, renderer, lightの初期化
-		_init: function(url) {
-
-			// ここでルートエレメントを保存しておく
-			var $root = $(this.rootElement);
-
-			// シーンの作成
-			this.scene = new THREE.Scene();
-
-			// カメラの初期化
-			this._initCamera();
-
-			// ライトの初期化
-			this._initLight();
-
-			// レンダラの初期化
-			this._initRenderer();
-
-			// 地図を読み込んで描画
-			this.loadMapData(url, this._mapKeyProps, 'prefecture');
-
-			//レンダリング
-			this._render();
-		},
-
-		// カメラの初期設定
-		_initCamera: function() {
-
-			// 表示領域の横と縦はバインドされた要素の大きさとする
-			var $root = $(this.rootElement);
-			var width = $root.width();
-			var height = $root.height();
-
-			// cameraの設定
-			// 視野の広さ(縦)
-			var fieldOfView = 70;
-			// 撮影領域の縦横比
-			var aspect = width / height;
-			// 撮影する距離の下限
-			var near = 10;
-			// 撮影する距離の上限
-			var far = 10000;
-			this.camera = new THREE.PerspectiveCamera(fieldOfView, aspect, near, far);
-
-			// デフォルトの位置に設定
-			this.camera.position.set(this.DEFAULTCAMERAPOS.x, this.DEFAULTCAMERAPOS.y,
-					this.DEFAULTCAMERAPOS.z);
-
-			// デフォルトの撮影方向(デフォルトでは原点に向ける)
-			this.camera.lookAt(this.DEFAULTCAMERALOOKAT);
-
-			// トラックコントロールできるようにする
-			this.controls = new this._trackballControls(this.camera, this.rootElement);
-		},
-
-		// ライトの初期設定
-		/**
-		 * @memberOf _
-		 */
-		_initLight: function() {
-			var directionLight = new THREE.DirectionalLight(0xffffff, 2);
-			directionLight.position.set(200, -200, 200).normalize();
-			this.scene.add(directionLight);
-		},
-
-		// レンダラの初期化
-		_initRenderer: function() {
-
-			var $root = $(this.rootElement);
-			var width = $root.width();
-			var height = $root.height();
-
-			if (THREE.WebGLRenderer) {
-				this.renderer = new THREE.WebGLRenderer({
-					antialias: true
-				});
-			} else {
-				this.renderer = new THREE.CanvasRenderer();
-			}
-
-			// 背景を白くする
-			this.renderer.setClearColor(new THREE.Color(0xffffff));
-			// 描画領域のサイズはバインドされた要素のサイズ
-			this.renderer.setSize(width, height);
-			// バインドされた要素にcanvasを追加
-			$root.append(this.renderer.domElement);
+			this.own(_init)();
 		},
 
 		// GeoJSONを指定したurlから読み込んでフィールドにセット
-		loadMapData: function(url, keyProps, colorGroupingProp) {
+		setUpMap: function() {
 
 			// GeoJSONを読む
 			// keyで指定した要素をキーとした連想配列を返す
 			// keyが空ならgeometryの配列を返す
-			this.MapCreateLogic.loadMapData(url, keyProps, colorGroupingProp,
-					this.IndicatorController.indicatorItem)
+			this.MapCreateLogic.loadMapData()
 
 			// 取得に成功した場合
 			.done(this.own(function(mapData) {
 
-				this.IndicatorController.indicatorItem.set('percent', 20);
+				this.IndicatorController.updateIndicator(20);
 
 				// mapのmeshデータを保持
-				this._mapData = mapData;
+				_mapData = mapData;
 
 
-				this.IndicatorController.indicatorItem.set('percent', 80);
+				this.IndicatorController.updateIndicator(80);
 
 				// 棒グラフのmeshデータを保持
-				this._barData = this._makeBarData();
+				this.own(_createBarData)();
 
 
-				this.IndicatorController.indicatorItem.set('percent', 90);
+				this.IndicatorController.updateIndicator(90);
 
 				// MapとBarのデータをsceneに追加
-				this._addMap();
-				this._addBars();
+				_addMap();
+				_addBars();
 
 				// レンダーする
-				this._renderAuto();
-				this.IndicatorController.indicatorItem.set('percent', 100);
+				this.IndicatorController.updateIndicator(100);
+				this.trigger('MapSetUpCompleted', null);
+
+				_renderAuto();
 			}))
 
 			// 取得に失敗した場合
 			.fail(function() {
-				console.log('load data -failed');
+				console.error('Load Data - Failed');
 			});
-		},
-
-		// 棒グラフのメッシュデータを作成
-		_makeBarData: function() {
-
-			var barData = {};
-			for ( var key in this._mapData) {
-
-				// areaがnullかislandのものはスキップ
-				var area = key.split('_')[1];
-				if (!area || area === 'null' || area === 'island') {
-					continue;
-				}
-
-				var mapMesh = this._mapData[key];
-				var sidelength = 2;
-				barData[key] = this.BarMeshCreateLogic.createBarMesh(5, mapMesh, sidelength);
-			}
-
-			return barData;
-		},
-
-		// 地図のメッシュをsceneに追加
-		_addMap: function() {
-
-			// meshを作成しsceneに配置
-			for ( var key in this._mapData) {
-				var mesh = this._mapData[key];
-				this.scene.add(mesh);
-			}
-		},
-
-		// 棒グラフのメッシュをsceneに追加
-		_addBars: function() {
-			for ( var key in this._barData) {
-				this.scene.add(this._barData[key]);
-			}
 		},
 
 		// データを渡して棒グラフを更新する
 		// データの形式はmapKey => valueのHashMap
-		updateBars: function(data) {
-			for ( var key in this._barData) {
+		updateBars: function(valueData) {
+			
+			for ( var key in _barData) {
 
-				var barMesh = this._barData[key];
-				var newValue = data[key] || 0;
+				var barMesh = _barData[key];
+				var newValue = valueData[key] || 0;
 
-				this.scene.remove(barMesh);
+				_scene.remove(barMesh);
 
 				if (0 < newValue) {
 					var newBarMesh = this.BarMeshCreateLogic.updateBarMesh(newValue, barMesh);
-					this._barData[key] = newBarMesh;
-					this.scene.add(newBarMesh);
+					_barData[key] = newBarMesh;
+					_scene.add(newBarMesh);
 				}
 
 			}
-			this._render();
-		},
-
-		// 準備が整ったときに一回だけ呼ぶ
-		_renderAuto: function() {
-
-			var that = this;
-			var f = function() {
-				that._render();
-				requestAnimationFrame(f);
-			};
-
-			f();
-		},
-
-		// レンダリングするメソッド
-		_render: function() {
-			this.controls.update();
-			this.renderer.render(this.scene, this.camera);
+			_render();
 		},
 
 		//カメラをデフォルトの位置と向きに戻す
 		resetCamera: function() {
-			this._initCamera();
+			this.own(_initCamera)();
 		}
 
 	};

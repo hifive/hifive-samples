@@ -34,19 +34,19 @@
 				rootElement: '#map'
 			},
 			SliderController: {
-				rootElement: '#sliderContainer'
+				rootElement: '#slider-container'
 			},
 			DateController: {
 				rootElement: '#date'
 			},
 			CameraResetButtonController: {
-				rootElement: '#cameraResetButton'
+				rootElement: '#camera-reset-button'
 			},
 			PlayerButtonController: {
-				rootElement: '#playerButtonContainer'
+				rootElement: '#play-button-container'
 			},
 			SpeedController: {
-				rootElement: '#speedControls'
+				rootElement: '#speed-controls'
 			}
 		},
 
@@ -106,7 +106,7 @@
 		},
 
 		//Sliderの値が変化した際に呼ばれるイベント
-		'#sliderContainer sliderValueInput': function(context) {
+		'#slider-container sliderValueInput': function(context) {
 			//子コントローラから投げられた値を取得しdateに変換
 			var value = context.evArg.value;
 			var date = this._indexDateArray[value];
@@ -119,7 +119,7 @@
 			this.MapController.updateBars(data);
 		},
 
-		'#sliderContainer sliderValueChanged': function(context) {
+		'#slider-container sliderValueChanged': function(context) {
 
 			var value = context.evArg.value;
 			var date = this._indexDateArray[value];
@@ -132,12 +132,12 @@
 		},
 
 		//カメラの位置と向きをリセット
-		'#cameraResetButton cameraResetClicked': function() {
+		'#camera-reset-button click': function() {
 			this.MapController.resetCamera();
 		},
 
 		//プレイヤーのボタン
-		'#playerButtonContainer playerClicked': function() {
+		'#play-button-container playerClicked': function() {
 			if (this._playID === null) {
 				var speed = this.SpeedController.getSpeed();
 				var interval = 1000 / speed;
@@ -160,7 +160,7 @@
 		},
 
 		//Speedが変化した際に呼ばれる
-		'#speedControls speedChanged': function(context) {
+		'#speed-controls speedChanged': function(context) {
 
 			if (this._playID === null) {
 				return;
@@ -223,5 +223,5 @@ $(function() {
 		mapKeyProps: ['prefecture', 'area'],
 		ParseDataFileLogic: geo.ParseDataFileLogic
 	};
-	h5.core.controller('#mapControl', geo.PageController, params);
+	h5.core.controller('#map-control', geo.PageController, params);
 });

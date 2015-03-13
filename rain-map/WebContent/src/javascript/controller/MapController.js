@@ -80,7 +80,7 @@
 		var width = $root.width();
 		var height = $root.height();
 
-		_renderer = THREE.WebGLRenderer ? new THREE.WebGLRenderer({	antialias: true}) : new THREE.CanavsRenderer();
+		_renderer = THREE.WebGLRenderer ? new THREE.WebGLRenderer({antialias: true}) : new THREE.CanavsRenderer();
 		
 		// 背景を白くする
 		_renderer.setClearColor(new THREE.Color(0xffffff));
@@ -169,6 +169,46 @@
 		f();
 	};
 
+	
+	var _infoId = 'infowindow';
+	var _isInfoOpened = false;
+	var _infoWidth = 60;
+	var _infoHeight = 25;
+	var _openInfoWindow = function(top, left, value) {
+		
+		if (_isInfoOpened) {
+			return;
+		}
+
+		var infowindow = $('<div></div>');
+		infowindow.attr('id', _infoId);
+		infowindow.html(value);
+		infowindow.css('position', 'absolute');
+		infowindow.css('z-index', '9999');
+		infowindow.css('top', top);
+		infowindow.css('left', left);
+		infowindow.width(_infoWidth);
+		infowindow.height(_infoHeight);
+		infowindow.css('textAlign', 'center');
+		infowindow.css('box-shadow',  '0 0 5px #aaa');
+		infowindow.css('border', '1px #000 solid');
+		infowindow.css('background', 'White');
+		$(this.rootElement).append(infowindow);
+		infowindow.fadeIn('slow');
+		_isInfoOpened = true;
+	};
+
+	var _closeInfoWindow = function() {
+		
+		var infowindow = $('#' + _infoId);
+		if (!infowindow) {
+			return;
+		}
+
+		infowindow.fadeOut('slow');
+		infowindow.remove();
+		_isInfoOpened = false;
+	};
 
 	/**
 	 * バインドした要素にMapを描画するコントローラ パラメータは次の通り { geoDataURL: GeoJSONファイルのURL, }
@@ -180,6 +220,8 @@
 		//ロジック
 		MapCreateLogic: geo.MapCreateLogic,
 		BarMeshCreateLogic: geo.BarMeshCreateLogic,
+		ArithmaticLogic: geo.ArithmaticLogic,
+		ArrayUtilityLogic: geo.ArrayUtilityLogic,
 
 		//コントローラ
 		IndicatorController: geo.IndicatorController,
@@ -204,6 +246,46 @@
 
 			// 地図のセットアップ
 			this.own(_init)();
+		},
+
+		//地図へのマウスオンイベント
+		'{rootElement} mousemove': function(context, $el) {
+
+			if (!_barData) {
+				return;
+			}
+
+			var $rendererDom = $(_renderer.domElement);
+			var position = $rendererDom.offset();
+			
+			var mouseX = context.event.clientX - position.left;
+			var mouseY = context.event.clientY - position.top;
+
+			var x = this.ArithmaticLogic.range(-1.0, 1.0, (mouseX / _renderer.domElement.width) * 2 - 1);
+			var y = this.ArithmaticLogic.range(-1.0, 1.0, - (mouseY / _renderer.domElement.height) * 2 + 1);
+			var vector = new THREE.Vector3(x, y, 1);
+			vector = vector.unproject(_camera);
+
+			var ray = new THREE.Raycaster(_camera.position, vector.sub(_camera.position).normalize());
+			var meshArray = this.ArrayUtilityLogic.values(_barData);
+			var intersects = ray.intersectObjects(meshArray);
+
+			if (intersects.length === 0) {
+				_closeInfoWindow();
+				return;
+			}
+
+			var overed = intersects[0];
+			var value = overed.object.geometry.parameters.depth;
+			
+			var left = context.event.offsetX;
+			var top = context.event.offsetY;
+
+			left += (left < $rendererDom.width() / 2) ? 5 : -5 - _infoWidth;
+			top += (top < $rendererDom.height() / 2) ? 5 : -5 - _infoHeight;
+			
+			this.own(_openInfoWindow)(top, left, value);
+
 		},
 
 		// GeoJSONを指定したurlから読み込んでフィールドにセット

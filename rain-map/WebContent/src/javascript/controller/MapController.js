@@ -193,6 +193,8 @@
 		infowindow.css('box-shadow',  '0 0 5px #aaa');
 		infowindow.css('border', '1px #000 solid');
 		infowindow.css('background', 'White');
+		infowindow.css('lineHeight', _infoHeight + 'px');
+		infowindow.css('verticalAlign', 'middle');
 		$(this.rootElement).append(infowindow);
 		infowindow.fadeIn('slow');
 		_isInfoOpened = true;

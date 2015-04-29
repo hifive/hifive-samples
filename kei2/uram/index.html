@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="ja" manifest="uram.appcache">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=520, user-scalable=no" >
+  <title>Uram</title>
+  <link rel="stylesheet" type="text/css" href="jquery-ui-1.10.4.min.css">
+  <link rel="stylesheet" type="text/css" href="h5-1.1.11.css">
+  <link rel="stylesheet" type="text/css" href="uram.css">
+  <script src="js/jquery-1.10.2.js"></script>
+  <script src="js/jquery-ui-1.10.4.min.js"></script>
+  <script src="js/ejs-1.0.h5mod.js"></script>
+  <script src="js/h5-1.1.11.js"></script>
+</head>
+<body>
+<a href="https://5jcup.org/works/5357afa02d0f47cb51000097" target="_blank">
+  <div style="background: url('https://googledrive.com/host/0B4ICVdbWz1ZDcnFDWVBzOFN1aDg/149_149/right/ribbon_orange_right01.png') no-repeat;
+    position: absolute; right: 0; top: 0; height: 149px; width: 149px">
+  </div>
+</a>
+
+<h1>Uram</h1>
+<div class="desc">
+</div>
+
+<div id="uramBoard" class="board preventSelection">
+  <div class="info preventSelection">
+    <span id="stageSpan">Stage: <span id="stage">1</span></span>
+    <span id="scoreSpan">Score: <span id="score"></span></span>
+    <span id="hiscoreSpan">Hi-Score: <span id="hiScore"></span></span>
+    <span id="restSpan">Enemy: <span id="rest"></span></span>
+  </div>
+  <div id="timeLimitBar" class="preventSelection"
+    style="width:480px; height:16px;"></div>
+  <div id="uramGame" class="preventSelection">
+    <canvas id="uramCanvas" width="480" height="480">
+    </canvas>
+    <div id="message" class="preventSelection titleLogo">Uram</div>
+    <div id="subMessage" class="preventSelection">
+      <span id="smText" class="preventSelection"></span>
+      <span id="smText1" class="preventSelection desc">
+      隠れている敵を制限時間内にすべて見つけてください<br></span>
+      <span id="smText2" class="preventSelection desc">
+      クリックした場所に敵がいれば発見!!<br></span>
+      <span id="smText3" class="preventSelection desc">
+      敵がいなければ、レーダーの円を描きます<br></span>
+      <span id="smText4" class="preventSelection desc">
+      敵はレーダーの円周上です!<br></span>
+      <span id="smText5" class="preventSelection desc">
+      <br>
+      <br></span>
+      <button id="demo">Demo</button>
+      <button id="start">Play!</button>
+      <button id="next">next stage</button>
+    </div>
+  </div>
+</div>
+
+<div id="video" class="board">
+  <video id="demoVideo" height="512">
+    <source src="playUram.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+     <source src="playUram.webm" type='video/webm; codecs="vp8, vorbis"' />
+  </video>
+  <br>
+  <button id="backToGame">back</button>
+</div>
+
+<copyright>Copyright (c) 2014 Kazuhito Kojima, All Rights Reserved.</copyright>
+<div class="ref">
+SE: <a href="http://www.senses-circuit.com/">フリー音楽素材 Senses Circuit</a>
+</div>
+BGM: <a href="https://5jcup.org/awards/mfac#materials">モバイルファクトリー</a><br>
+本作品は、HTML5 Japan Cup 2014 <a href="http://5jcup.org/"> （http://5jcup.org）</a>応募作品です。
+<script src="js/uram.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+#
+#Tue Nov 22 14:59:11 JST 2011
+hi5.tool.jslint.option=/hifive-html5seminar/config/jshint_config.xml
+hi5.tool.jslint.use.other.project=false
+hi5.tool.jslint.other.project=
+hi5.tool.jslint.jslint=/hifive-html5seminar/config/jshint.js
+hi5.tool.jslint.lib.list=

@@ -14,6 +14,9 @@
 		'.create click': function(ctx, $el) {
 			var num = parseInt(this.$find('[name="list-num"]').val());
 			this.currentList = util.getData(num);
+			if (this.currentPageIndex !== null) {
+				this.currentPageIndex = 0;
+			}
 			this.refreshTable();
 		},
 		'.sort click': function(ctx, $el) {
@@ -36,7 +39,7 @@
 			}
 		},
 		'.paging-ctrls button click': function(ctx, $el) {
-			var lastPageIndex = parseInt(this.currentList.length / NUM_PER_PAGE);
+			var lastPageIndex = parseInt((this.currentList.length - 1) / NUM_PER_PAGE);
 			switch ($el.data('page-link')) {
 			case 'first':
 				this.currentPageIndex = 0;
@@ -92,7 +95,7 @@
 				return;
 			}
 			var isFirstPage = this.currentPageIndex === 0;
-			var isLastPage = this.currentPageIndex === parseInt(this.currentList.length
+			var isLastPage = this.currentPageIndex === parseInt((this.currentList.length - 1)
 					/ NUM_PER_PAGE);
 			var $pagingCtrls = this.$find('.paging-ctrls');
 			$pagingCtrls.find('[data-page-link="first"]').prop('disabled', isFirstPage);

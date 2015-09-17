@@ -1,0 +1,22 @@
+.ui-button {
+  nested-pro-height: 50%;
+  nested-pro-width: 30%;
+}
+.ui-button.test {
+  width: 100%;
+}
+
+h3 {
+  color: red;
+}
+
+.ui-textbox .message {
+  color: gray;
+  width: 50px;
+}
+
+.message {
+  height: 200px;
+}
+
+/*# sourceMappingURL=sass-sample.css.map */

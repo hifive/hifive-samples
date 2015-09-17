@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>hifive HTML5セミナーコードサンプル</title>
+	<meta name="viewport" content="width=device-width">
+</head>
+
+<body>
+	<form>
+		<h3>形式チェック</h3>
+		<label>
+			入力必須：<input required placeholder="電話番号" type="text" name="tel">
+		</label>
+		<br>
+		<label>
+			数値のみ：<input placeholder="数値" pattern="\d*" type="text" name="val">
+		</label>
+		<br>
+		<h3>入力形式</h3>
+		<label>
+			数値(number)：<input placeholder="数値" type="number" min="0" name="num">
+		</label>
+		<br>
+		<label>
+			数値(range)：<input placeholder="数値" type="range" min="0" max="100" value="0" name="num">
+		</label>
+		<br>
+		<label>
+			電話番号(tel)：<input placeholder="電話番号" type="tel" name="tel3">
+		</label>
+		<br>
+		<label>
+			数値のみ(type="number", pattern="\d*")：<input placeholder="数値" pattern="\d*" type="number" name="val">
+		</label>
+		<br>
+		<br>
+		<input type="submit" name="submitBtn" value="送信">
+	</form>
+</body>
+
+</html>

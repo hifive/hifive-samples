@@ -1,0 +1,28 @@
+.ui-button {
+		&.test {
+				width: 100%;
+		}
+		
+		nested-pro: {
+				height: 50%;
+				width: 30%;
+		}
+}
+
+h3 {
+		color: red;
+}
+
+.ui-textbox {
+		
+		.message {
+				color: gray;
+				width: 50px;
+		}
+		
+		
+}
+
+.message {
+		height: 200px;
+}

@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>コンポーネント化の基本的な考え方</title>
+
+<link href="ui-component-styles.css" rel="stylesheet">
+
+<link href="/hifive-res/fw/current/h5.css" rel="stylesheet">
+<script src="/hifive-res/ext/jquery/jquery-2.1.4.min.js"></script>
+<script src="/hifive-res/fw/current/h5.dev.js"></script>
+<script src="/hifive-res/fw/current/ejs-h5mod.js"></script>
+<!-- 	<script src="/hifive-res/devtool/current/h5-dev-tool.js"></script> -->
+<script>
+	(function() {
+
+		var mySliderController = {
+			__name: 'sample.ui.MySliderController',
+
+			_lastLeft: 0,
+
+			_value: 0,
+
+			getValue: function() {
+				return this._value;
+			},
+
+			setValue: function(value) {
+				var $thumb = this.$find('.thumb');
+
+				var thumbWidth = $thumb.width();
+				var sliderWidth = $(this.rootElement).width();
+
+				if (value < 0) {
+					return;
+				} else if (value > sliderWidth - thumbWidth) {
+					return;
+				}
+
+				this._value = value;
+
+				$thumb.css('left', value);
+
+				this.trigger('changeValue', {
+					value: value
+				});
+			},
+
+			'.thumb h5trackstart': function(context, $el) {
+				this._lastLeft = $el.position().left;
+
+				this.log.debug('start: left=' + this._lastLeft);
+			},
+
+			'.thumb h5trackmove': function(context, $el) {
+				var left = this._lastLeft + context.event.dx;
+
+				this._lastLeft = left;
+
+				this.log.debug('start: left=' + left);
+
+				this.setValue(left);
+			},
+
+			'.thumb h5trackend': function(context, $el) {
+				this.log.debug('slider end');
+			}
+		};
+		h5.core.expose(mySliderController);
+
+
+		var pageController = {
+			__name: 'sample.PageController',
+
+			__meta: {
+				sliderController: {
+					rootElement: '.ui-my-slider'
+				}
+			},
+
+			__ready: function() {
+				var value = this.sliderController.getValue();
+				this.showValue(value);
+			},
+
+			sliderController: sample.ui.MySliderController,
+
+			showValue: function(value) {
+				this.$find('.sliderValueLabel').text(value);
+			},
+
+			'.setValueBtn click': function() {
+				var value = parseInt(this.$find('[name="val"]').val());
+
+				this.sliderController.setValue(value);
+			},
+
+			'.ui-my-slider changeValue': function(context) {
+				var value = context.evArg.value;
+				this.showValue(value);
+			}
+		};
+
+
+
+		$(function() {
+
+			h5.core.controller('body', pageController);
+
+			//			$('.ui-my-slider').each(function() {
+			//				h5.core.controller(this, mySliderController);
+			//			});
+
+		});
+
+	})();
+</script>
+
+</head>
+<body>
+
+	<div class="wrapper">
+		<input type="text" name="val" value="0" pattern="\d*" required>
+		<button class="button setValueBtn">値をセット</button>
+	</div>
+
+	<div class="ui-my-slider">
+		<div class="base">
+			<span class="minLabel">0</span> <span class="maxLabel">200</span>
+		</div>
+		<div class="thumb"></div>
+	</div>
+
+	<div>
+	現在のスライダーの値：<span class="sliderValueLabel"></span>
+	</div>
+
+</body>
+
+</html>

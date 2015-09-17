@@ -27,6 +27,13 @@
 				desc: desc,
 				prop: prop
 			};
+			if (this.$currentEditInput) {
+				// 編集中であれば確定してからソートされるようにする
+				setTimeout(this.own(function() {
+					this.sort(desc, prop);
+				}, 0));
+				return;
+			}
 			this.sort(desc, prop);
 		},
 		'.editable dblclick': function(ctx, $el) {
@@ -37,10 +44,14 @@
 					+ prop + '" type="text">');
 			$el.empty().append(this.$currentEditInput);
 			var val = null;
-			for (var i = 0, l = this.currentList.length; i < l; i++) {
-				if (id === this.currentList[i].id) {
-					val = this.currentList[i][prop];
-					break;
+			if (this.changeData[id] && this.changeData[id][prop]) {
+				val = this.changeData[id][prop];
+			} else {
+				for (var i = 0, l = this.currentList.length; i < l; i++) {
+					if (id === this.currentList[i].id) {
+						val = this.currentList[i][prop];
+						break;
+					}
 				}
 			}
 			this.$currentEditInput.focus().val(val);

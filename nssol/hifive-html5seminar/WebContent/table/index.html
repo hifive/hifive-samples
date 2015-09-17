@@ -13,11 +13,21 @@
 <script src="/hifive-res/ext/jquery/jquery-2.js"></script>
 <!--<![endif]-->
 
+<!-- bootstrap -->
+<link href="/hifive-res/ext/bootstrap/3.3.4/css/bootstrap.min.css"
+	rel="stylesheet" media="screen">
+<script src="/hifive-res/ext/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
 <!-- hifive -->
 <link href="/hifive-res/fw/current/h5.css" rel="stylesheet">
 <script src="/hifive-res/fw/current/ejs-h5mod.js"></script>
 <script src="/hifive-res/fw/current/h5.dev.js"></script>
 
+<title></title>
+</head>
+<body>
+</body>
+</html>
 <script src="util.js"></script>
 <script src="table.js"></script>
 <script>
@@ -28,19 +38,16 @@
 
 <script type="text/ejs" id="table">
 	[% var props = ['id','name','place','position','tel','mail']; %]
-	<table class="table-default">
+	[% var names = ['ID','名前','部署','役職','TEL','メール']; %]
+	<table class="main-table table table-striped scrollable">
 		<thead>
 			<tr>
-				<th>ID</th>
-				<th>名前</th>
-				<th>部署</th>
-				<th>役職</th>
-				<th>TEL</th>
-				<th>メール</th>
-			</tr>
-			<tr class="sort-controlls">
 				[% for(var i = 0, l = props.length; i < l; i++){ %]
-				<th><button class="sort" data-sort-prop="[%= props[i] %]">↑</button><button class="sort" data-sort-prop="[%= props[i] %]" data-sort-order="desc">↓</button></</th>
+				<th class="cell-[%= props[i] %]">
+					<span>[%= names[i] %]</span><br>
+					<button class="sort" data-sort-prop="[%= props[i] %]">↑</button>
+					<button class="sort" data-sort-prop="[%= props[i] %]" data-sort-order="desc">↓</button>
+				</th>
 				[% } %]
 			</tr>
 		</thead>
@@ -48,13 +55,13 @@
 			[% for(var i = 0, l = list.length; i < l; i++){
 				var data = list[i]; %]
 
-			<tr>
-				<td>[%= data.id %]</td>
-				<td>[%= data.name %]</td>
-				<td>[%= data.place %]</td>
-				<td>[%= data.position %]</td>
-				<td>[%= data.tel %]</td>
-				<td>[%= data.mail %]</td>
+			<tr data-row-id=[%= data.id %]>
+				<td class="cell-id">[%= data.id %]</td>
+				<td class="cell-name editable">[%= data.name %]</td>
+				<td class="cell-place editable">[%= data.place %]</td>
+				<td class="cell-position editable">[%= data.position %]</td>
+				<td class="cell-tel editable">[%= data.tel %]</td>
+				<td class="cell-mail editable">[%= data.mail %]</td>
 			</tr>
 			[% } %]
 		</tbody>
@@ -62,9 +69,44 @@
 </script>
 
 <style>
-input[type="text"] {
-	font-size: 20px;
-	width: 60px;
+.main-table {
+	width: auto;
+	border: 1px solid #ccc;
+}
+
+.main-table.scrollable thead {
+	display: block;
+	overflow-y: hidden;
+}
+
+.main-table.scrollable tbody {
+	display: block;
+	overflow-y: scroll;
+	height: 700px;
+}
+
+.cell-id {
+	width: 73px;
+}
+
+.cell-name {
+	width: 90px;
+}
+
+.cell-place {
+	width: 78px;
+}
+
+.cell-position {
+	width: 86px;
+}
+
+.cell-tel {
+	width: 114px;
+}
+
+.cell-mail {
+	width: 258px;
 }
 
 .btn-default {
@@ -87,18 +129,34 @@ input[type="text"] {
 <title>テーブル</title>
 </head>
 <body>
-	<h2>テーブルサンプル</h2>
-	<div>
-		<label><input type="text" name="list-num">件</label>
-		<button class="create btn-default">表示</button>
-		<label><input type="checkbox" name="paging">ページングを有効にする</label>
-	</div>
-	<div class="table-wrapper"></div>
-	<div class="paging-ctrls">
-		<button class="btn-default" data-page-link="first">先頭</button>
-		<button class="btn-default" data-page-link="prev">←</button>
-		<button class="btn-default" data-page-link="next">→</button>
-		<button class="btn-default" data-page-link="last">最後</button>
+	<div class="container">
+		<h2>テーブルサンプル</h2>
+		<div class="row">
+			<div class="col-xs-12">
+				<form class="form-inline">
+					<div class="form-group">
+						<label><input class="form-control" type="text"
+							name="list-num">件</label>
+					</div>
+					<button class="create btn btn-default">表示</button>
+					<div class="form-group">
+						<label><input type="checkbox" class="form-control"
+							name="paging">ページングを有効にする</label>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="table-wrapper"></div>
+				<div class="paging-ctrls">
+					<button class="btn btn-default" data-page-link="first">先頭</button>
+					<button class="btn btn-default" data-page-link="prev">←</button>
+					<button class="btn btn-default" data-page-link="next">→</button>
+					<button class="btn btn-default" data-page-link="last">最後</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 (function($) {
 	var DEFAULT_NUM = 1000;
-	var NUM_PER_PAGE = 20;
+	var NUM_PER_PAGE = 10;
 	var controller = {
 		__name: 'sample.PageController',
 		currentList: null,
@@ -92,8 +92,10 @@
 				list: list
 			});
 			if (this.currentPageIndex === null) {
+				this.$find('.main-table').addClass('scrollable');
 				return;
 			}
+			this.$find('.main-table').removeClass('scrollable');
 			var isFirstPage = this.currentPageIndex === 0;
 			var isLastPage = this.currentPageIndex === parseInt((this.currentList.length - 1)
 					/ NUM_PER_PAGE);

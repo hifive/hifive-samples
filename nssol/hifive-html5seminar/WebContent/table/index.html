@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- jquery -->
+<!--[if lt IE 9]>
+		<script src="/hifive-res/ext/jquery/jquery-1.js"></script>
+		<![endif]-->
+<!--[if gte IE 9]><!-->
+<script src="/hifive-res/ext/jquery/jquery-2.js"></script>
+<!--<![endif]-->
+
+<!-- hifive -->
+<link href="/hifive-res/fw/current/h5.css" rel="stylesheet">
+<script src="/hifive-res/fw/current/ejs-h5mod.js"></script>
+<script src="/hifive-res/fw/current/h5.dev.js"></script>
+
+<script src="util.js"></script>
+<script src="table.js"></script>
+<script>
+	$(function() {
+		h5.core.controller(document.body, sample.PageController)
+	});
+</script>
+
+<script type="text/ejs" id="table">
+	[% var props = ['id','name','place','position','tel','mail']; %]
+	<table class="table-default">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>名前</th>
+				<th>部署</th>
+				<th>役職</th>
+				<th>TEL</th>
+				<th>メール</th>
+			</tr>
+			<tr class="sort-controlls">
+				[% for(var i = 0, l = props.length; i < l; i++){ %]
+				<th><button class="sort" data-sort-prop="[%= props[i] %]">↑</button><button class="sort" data-sort-prop="[%= props[i] %]" data-sort-order="desc">↓</button></</th>
+				[% } %]
+			</tr>
+		</thead>
+		<tbody>
+			[% for(var i = 0, l = list.length; i < l; i++){
+				var data = list[i]; %]
+
+			<tr>
+				<td>[%= data.id %]</td>
+				<td>[%= data.name %]</td>
+				<td>[%= data.place %]</td>
+				<td>[%= data.position %]</td>
+				<td>[%= data.tel %]</td>
+				<td>[%= data.mail %]</td>
+			</tr>
+			[% } %]
+		</tbody>
+	</table>
+</script>
+
+<style>
+input[type="text"] {
+	font-size: 20px;
+	width: 60px;
+}
+
+.btn-default {
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.paging-ctrls {
+	display: none;
+}
+
+.paging-ctrls.on {
+	display: block;
+}
+
+.paging-ctrls button {
+	font-size: 1.2em;
+}
+</style>
+<title>テーブル</title>
+</head>
+<body>
+	<h2>テーブルサンプル</h2>
+	<div>
+		<label><input type="text" name="list-num">件</label>
+		<button class="create btn-default">表示</button>
+		<label><input type="checkbox" name="paging">ページングを有効にする</label>
+	</div>
+	<div class="table-wrapper"></div>
+	<div class="paging-ctrls">
+		<button class="btn-default" data-page-link="first">先頭</button>
+		<button class="btn-default" data-page-link="prev">←</button>
+		<button class="btn-default" data-page-link="next">→</button>
+		<button class="btn-default" data-page-link="last">最後</button>
+	</div>
+</body>
+</html>

@@ -6,6 +6,7 @@
 		currentList: null,
 		currentPageIndex: null,
 		currentSortCondition: null,
+		changeData: {},
 		__init: function() {
 			this.currentList = util.getData(DEFAULT_NUM);
 			this.$find('[name="list-num"]').val(DEFAULT_NUM);
@@ -27,6 +28,35 @@
 				prop: prop
 			};
 			this.sort(desc, prop);
+		},
+		'.editable dblclick': function(ctx, $el) {
+			var id = $el.closest('[data-row-id]').data('row-id');
+			var prop = $el.data('edit-prop');
+			// input要素を表示
+			this.$currentEditInput = $('<input class="edit-input form-control" data-edit-prop="'
+					+ prop + '" type="text">');
+			$el.empty().append(this.$currentEditInput);
+			var val = null;
+			for (var i = 0, l = this.currentList.length; i < l; i++) {
+				if (id === this.currentList[i].id) {
+					val = this.currentList[i][prop];
+					break;
+				}
+			}
+			this.$currentEditInput.focus().val(val);
+		},
+		'.edit-input keydown': function(ctx, $el) {
+			// エンターキーで確定
+			if (ctx.event.keyCode !== 13) {
+				return;
+			}
+			this.editDone();
+		},
+		'{document} click': function(ctx) {
+			// セル編集中なら中断
+			if (this.$currentEditInput && ctx.event.target !== this.$currentEditInput[0]) {
+				this.editDone();
+			}
 		},
 		'[name="paging"] change': function(ctx, $el) {
 			var on = $el.prop('checked');
@@ -62,8 +92,16 @@
 			this.refreshTable(this.currentPageIndex);
 		},
 		sort: function(desc, prop) {
+			var changeData = this.changeData;
 			this.currentList.sort(function(a, b) {
-				if (a[prop] > b[prop]) {
+				var aId = a.id;
+				var bId = b.id;
+				var aVal = changeData[aId] && changeData[aId][prop] ? changeData[aId][prop]
+						: a[prop];
+				var bVal = changeData[bId] && changeData[bId][prop] ? changeData[bId][prop]
+						: b[prop];
+
+				if (aVal > bVal) {
 					return desc ? -1 : 1;
 				} else {
 					return desc ? 1 : -1;
@@ -79,6 +117,28 @@
 			this.currentPageIndex = null;
 			this.refreshTable();
 		},
+		editDone: function() {
+			var $input = this.$currentEditInput;
+			var id = $input.closest('[data-row-id]').data('row-id');
+			var prop = $input.data('edit-prop');
+			var val = $input.val();
+			var oldVal = null;
+			for (var i = 0, l = this.currentList.length; i < l; i++) {
+				if (id === this.currentList[i].id) {
+					oldVal = this.currentList[i][prop];
+					break;
+				}
+			}
+			var $parent = $input.parent();
+			$input.remove();
+			this.$currentEditInput = null;
+			$parent.text(val);
+			if (val === oldVal) {
+				return;
+			}
+			this.changeData[id] = this.changeData[id] || {};
+			this.changeData[id][prop] = val;
+		},
 		refreshTable: function() {
 			var list;
 			if (this.currentPageIndex !== null) {
@@ -89,7 +149,8 @@
 			}
 			var $tableWrapper = this.$find('.table-wrapper');
 			this.view.update($tableWrapper, 'table', {
-				list: list
+				list: list,
+				changeData: this.changeData
 			});
 			if (this.currentPageIndex === null) {
 				this.$find('.main-table').addClass('scrollable');

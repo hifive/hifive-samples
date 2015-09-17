@@ -53,15 +53,19 @@
 		</thead>
 		<tbody>
 			[% for(var i = 0, l = list.length; i < l; i++){
-				var data = list[i]; %]
-
+				var data = list[i];
+				var id = list[i].id; %]
 			<tr data-row-id=[%= data.id %]>
 				<td class="cell-id">[%= data.id %]</td>
-				<td class="cell-name editable">[%= data.name %]</td>
-				<td class="cell-place editable">[%= data.place %]</td>
-				<td class="cell-position editable">[%= data.position %]</td>
-				<td class="cell-tel editable">[%= data.tel %]</td>
-				<td class="cell-mail editable">[%= data.mail %]</td>
+				[% for(var j = 1, len = props.length; j < len; j++){
+					var prop = props[j];
+					var val = data[prop];
+					if(changeData[id] && changeData[id][prop]){
+						val = changeData[id][prop];
+					}
+				%]
+				<td class="cell-[%= prop %] editable" data-edit-prop="[%= prop %]">[%= val %]</td>
+				[% } %]
 			</tr>
 			[% } %]
 		</tbody>
@@ -85,28 +89,32 @@
 	height: 700px;
 }
 
+.edit-input {
+	width: 100%;
+}
+
 .cell-id {
 	width: 73px;
 }
 
 .cell-name {
-	width: 90px;
+	width: 130px;
 }
 
 .cell-place {
-	width: 78px;
+	width: 118px;
 }
 
 .cell-position {
-	width: 86px;
+	width: 126px;
 }
 
 .cell-tel {
-	width: 114px;
+	width: 154px;
 }
 
 .cell-mail {
-	width: 258px;
+	width: 278px;
 }
 
 .btn-default {
@@ -138,7 +146,7 @@
 						<label><input class="form-control" type="text"
 							name="list-num">件</label>
 					</div>
-					<button class="create btn btn-default">表示</button>
+					<div class="create btn btn-default">表示</div>
 					<div class="form-group">
 						<label><input type="checkbox" class="form-control"
 							name="paging">ページングを有効にする</label>

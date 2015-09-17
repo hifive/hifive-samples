@@ -93,69 +93,7 @@
 
 		sorted = $.extend([], data);
 	}
-	initData(10000);
-
-	var sortKey = null;
-	var sortOrder = 'asc';
-	var sort = function(option) {
-		var requestSortKey = option.sortKey;
-		var requestSortOrder = option.sortOrder;
-		if (typeof requestSortKey === 'undefined') {
-			requestSortKey = null;
-		}
-		if (requestSortOrder == null) {
-			requestSortOrder = 'asc';
-		}
-
-		if (sortKey === requestSortKey && sortOrder === requestSortOrder) {
-			return;
-		}
-
-		sortKey = requestSortKey;
-		sortOrder = requestSortOrder;
-
-		if (sortKey == null) {
-			sorted = $.extend([], data);
-			return;
-		}
-
-		sorted.sort(function(x, y) {
-			var xValue = x[sortKey];
-			var yValue = y[sortKey];
-
-			var base = (sortOrder === 'asc') ? 1 : -1;
-
-			if (xValue < yValue) {
-				return -1 * base;
-			}
-			if (xValue === yValue) {
-				return 0;
-			}
-			return 1 * base;
-		});
-	};
-
-
-	//結果作成処理
-	var createResult = function(option) {
-
-		sort(option);
-
-		// option.endが用意したダミーデータより長いなら再生成する
-		if (option.end && option.end >= sorted.length) {
-			initData(option.end);
-		}
-
-		var result = {
-			list: sorted.slice(option.start, option.end)
-		};
-
-		if (option.requireTotalCount) {
-			result.totalCount = sorted.length;
-		}
-
-		return result;
-	};
+	initData(1000);
 
 	h5.u.obj.expose('util', {
 		getData: function(num) {

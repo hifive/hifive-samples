@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>hifive HTML5セミナーコードサンプル</title>
+	<link href="/hifive-res/fw/current/h5.css" rel="stylesheet">
+	<script src="/hifive-res/ext/jquery/jquery-2.1.4.min.js"></script>
+	<script src="/hifive-res/fw/current/h5.dev.js"></script>
+	<script src="/hifive-res/fw/current/ejs-h5mod.js"></script>
+	<!--
+	<script src="/hifive-res/devtool/current/h5-dev-tool.js"></script>
+	-->
+	<script>
+		(function() {
+
+			var controller = {
+				__name: 'sample.DragDropController',
+				
+				'.dropTarget [dragenter]': function(context, $el) {
+					var ev = context.event.originalEvent;
+					ev.preventDefault();
+					ev.stopPropagation();
+					ev.dataTransfer.dropEffect= 'copy';
+				},
+
+				'.dropTarget [dragover]': function(context, $el) {
+					var ev = context.event.originalEvent;
+					ev.preventDefault();
+					ev.stopPropagation();
+					ev.dataTransfer.dropEffect= 'copy';
+				},
+
+				//特定領域のみドロップ可能にしたい場合は
+				//ドロップさせたくない領域でevent.dataTransfer.dropEffect='none'を設定する
+//				'{rootElement} dragenter': function(context, $el) {
+//					var ev = context.event.originalEvent;
+//					ev.preventDefault();
+//					ev.dataTransfer.dropEffect= 'none';
+//				},
+//
+//				'{rootElement} dragover': function(context, $el) {
+//					var ev = context.event.originalEvent;
+//					ev.preventDefault();
+//					ev.dataTransfer.dropEffect= 'none';
+//				},
+
+				'.dropTarget drop': function(context, $el) {
+					var ev = context.event.originalEvent;
+					ev.preventDefault();
+					var files = ev.dataTransfer.files;
+					var firstFile = files[0];
+
+					var reader = new FileReader();
+					reader.onload = function() {
+						$('#droppedImage')[0].src = reader.result;
+					};
+					reader.readAsDataURL(firstFile);
+				}
+			};
+
+			$(function() {
+				h5.core.controller('body', controller);
+			});
+
+		})();
+
+	</script>
+</head>
+<style>
+	html, body {
+		width: 100%;
+		height: 100%;
+	}
+	
+	.dropTarget {
+		margin: 10px;
+		padding: 10px;
+		border: dashed 3px black;
+		width: 200px;
+		height: 200px;
+	}
+
+	#droppedImage {
+		border: 1px solid black;
+	}
+</style>
+
+<body>
+	<div class="dropTarget">
+		ここにファイルをドロップ
+	</div>
+	ドロップされた画像：<br>
+	<img id="droppedImage">
+</body>
+
+</html>

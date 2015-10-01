@@ -1,0 +1,38 @@
+.wrapper {
+	margin: 20px;
+}
+
+.ui-my-slider {
+	width: 216px;
+	height: 20px;
+	background-color: yellow;
+	position: relative;
+	border: solid 1px black;
+
+	.base {
+		margin: 0;
+		padding: 0;
+
+		width: 100%;
+
+		position: absolute;
+
+		.minLabel {
+			float: left;
+		}
+
+		.maxLabel {
+			float: right;
+		}
+	}
+
+	.thumb {
+		position: absolute;
+		width:16px;
+		height: 100%;
+		top: 0;
+//		background-color: linear-gradient(white, gray);
+		background-color: gray;
+	}
+
+}

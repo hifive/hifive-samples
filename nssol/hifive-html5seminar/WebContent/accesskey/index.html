@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>ショートカットキーの動作</title>
+	<style>
+		html,
+		body {
+			width: 90%;
+		}
+		
+		.sample-group {
+			margin: 20px 0;
+			padding: 5px;
+			border: solid 1px black;
+		}
+		
+		.desc {
+			margin: 10px;
+			padding: 5px;
+			border: dashed 2px gray;
+		}
+		
+		.header {
+			height: 5px;
+			width: 100%;
+		}
+
+	</style>
+</head>
+
+<body>
+	<div class="header">
+
+	</div>
+	<form>
+		<div class="forms sample-group">
+			<label accesskey="A">accesskey="A"を指定：
+				<input type="text" name="input1" placeholder="入力">
+			</label>
+			<br>
+			<select accesskey="b" name="select1">
+				<option>北海道</option>
+				<option>本州</option>
+				<option>四国</option>
+				<option>九州・沖縄</option>
+			</select>(B)
+			<br>
+			<br>
+			<a accesskey="C" href="notfound.html">リンク文字列(C)</a>
+			<div class="desc">
+				input, select, aなどインタラクティブ要素にaccesskey属性を付けるとショートカットキーが使える。
+				<br> ショートカットキーはAlt+Aのように入力。
+				<br> リンクの場合、Chrome,Edgeではすぐに画面遷移するが、IE11ではリンク選択状態になるのみ。
+			</div>
+		</div>
+
+		<div class="sample-group">
+			<span tabindex="1" accesskey="Q">spanで囲んだ文字列(Q)</span>
+			<br>
+			<div style="height: 2em;"></div>
+			<span accesskey="U">spanで囲んだ文字列(U): tabindex未指定なのでaccesskey属性は効かない</span>
+			<br>
+		</div>
+
+		<div class="sample-group">
+			<label accesskey="s">accesskey="s"を指定：
+				<input type="text" name="input2" placeholder="入力">
+			</label>
+			<br>
+			<label accesskey="s">accesskey="s"を指定：
+				<input type="text" name="input3" placeholder="入力">
+			</label>
+			<br>
+			<label accesskey="s">accesskey="s"を指定：
+				<input type="text" name="input3" placeholder="入力">
+			</label>
+			<br>
+			<div class="desc">
+				Chromeは複数の要素に同じaccesskeyを設定すると最後の要素にフォーカスが当たる。<br>
+				Edge,IE11は順番にフォーカスが移動する。
+			</div>
+		</div>
+
+		<div class="sample-group">
+			<label tabindex="1" accesskey="T">accesskey="T"を指定：
+				<input type="text" name="input4" placeholder="入力">
+			</label>
+			<br>
+			<span tabindex="-1" accesskey="T">文字列(T)</span>
+			<div class="desc">
+				Chromeはspanタグなど非インタラクティブ要素とaccesskeyを組み合わせると挙動が複雑。<br>
+				組み合わせやタグの順序等により動作しない場合がある。
+			</div>
+		</div>
+		
+		<div style="margin-top: 100px;">
+		<a href="http://www.htmlhifive.com/ja/recipe/keyboardjs/index.html">KeyboardJS（スクリプト）によるキーフック例</a>
+		</div>
+	</form>
+</body>
+
+</html>

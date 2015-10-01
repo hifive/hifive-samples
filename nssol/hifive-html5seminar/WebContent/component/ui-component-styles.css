@@ -1,0 +1,32 @@
+.wrapper {
+  margin: 20px;
+}
+
+.ui-my-slider {
+  width: 216px;
+  height: 20px;
+  background-color: yellow;
+  position: relative;
+  border: solid 1px black;
+}
+.ui-my-slider .base {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  position: absolute;
+}
+.ui-my-slider .base .minLabel {
+  float: left;
+}
+.ui-my-slider .base .maxLabel {
+  float: right;
+}
+.ui-my-slider .thumb {
+  position: absolute;
+  width: 16px;
+  height: 100%;
+  top: 0;
+  background-color: gray;
+}
+
+/*# sourceMappingURL=ui-component-styles.css.map */

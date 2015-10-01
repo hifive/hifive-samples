@@ -2,8 +2,8 @@ $(function() {
 	// コントローラの元となるオブジェクトを作成
 	var baloonController = {
 		_air : 100,
-		_capacity : 30000,
-		_bangSound : new Audio('res/sound/bang.m4a'),
+		_capacity : 450000,
+		_bangSound : null,
 		_WAITTIME : 1000,
 
 		__name : 'pump.controller.BaloonController',
@@ -21,6 +21,7 @@ $(function() {
 			var tiedX = $pumpPicContainer.offset().left
 					+ ($pumpPicContainer.width() * 0.25) + 20;
 			this.tie(tiedX, tiedY);
+            this._bangSound = document.getElementById('bangSound');
 		},
 
 		'{document} pump' : function(context, $el) {
@@ -56,9 +57,9 @@ $(function() {
 					* 0.5;
 			var $pumpPicContainer = this.$find('#pumpPicContainer');
 			var tiedY = $pumpPicContainer.offset().top
-					+ $pumpPicContainer.height() - 20;
+            + ($pumpPicContainer.height() * 0.8);
 			var tiedX = $pumpPicContainer.offset().left
-					+ ($pumpPicContainer.width() * 0.25) + 30;
+            + ($pumpPicContainer.width() * 0.4);
 			var $line = this.$find("#stringSvg #string");
 			this.log.debug('from({0}, {1}) to({2}, {3})', x, y, tiedX, tiedY);
 
@@ -91,6 +92,7 @@ $(function() {
 			    this.$find('#string').css({visibility: "visible"});
                 this._drawLine();
 			}), this._WAITTIME);
+            this.trigger('bang');
 		}
 	};
 

@@ -2,12 +2,11 @@ $(function() {
 	// コントローラの元となるオブジェクトを作成
 	var pumpController = {
 		_WAITTIME : 200,
-		_PUMP2AIRRATE : 100,
+		_PUMP2AIRRATE : 800,
 		_PICPATH : 'res/picture/pump',
 		__name : 'pump.controller.PumpController',
 
-		_shooSound : new Audio('res/sound/shoo.m4a'),
-		_cockSound : new Audio('res/sound/cock.m4a'),
+		shooSound : null,
 
 		_shakeController : pump.controller.ShakeController,
 
@@ -19,6 +18,7 @@ $(function() {
 		},
 		__ready : function() {
 			this.log.info('{0}を実行', '__ready');
+            this.shooSound = document.getElementById('shooSound');
 		},
 
 		'{rootElement} shake' : function(context, $el) {
@@ -36,30 +36,32 @@ $(function() {
 			this.log.info('pumpDown');
 			var $pumpPic = this.$find('.pumpPic');
 			$pumpPic.attr('class', 'pumpPic pumpPic2');
-			if (this._shooSound.readyState !== 4) {
-				this._shooSound.load();
-			}
-			this._shooSound.play();
+
+            this.shooSound.currentTime = 0;
+			this.shooSound.play();
+            //this.shooSound = new Audio(this.shooSound.src);
 		},
 		_pumpUp : function() {
 			this.log.info('pumpUp');
 			var $pumpPic = this.$find('.pumpPic');
 			$pumpPic.attr('class', 'pumpPic pumpPic1');
-            /*
-			if (this._cockSound.readyState !== 4) {
-				this._cockSound.load();
-			}
-			this._cockSound.play();
-            */
 		},
 
 		_wait : function() {
 			setTimeout(function() {
 				return;
 			}, this._WAITTIME);
-		}
+		},
+
+        loadSounds : function(){
+			if (this.shooSound.readyState !== 4) {
+                this.log.debug('loading sounds');
+				this.shooSound.load();
+			}
+        }
 	};
 
+    h5.core.expose(pumpController);
 	// id="container"である要素にコントローラをバインド
-	h5.core.controller('#container', pumpController);
+	//h5.core.controller('#container', pumpController);
 });

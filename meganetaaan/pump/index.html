@@ -13,29 +13,39 @@
 <!-- min版ではログ出力が抑制され、高速に動作します -->
 <script src="res/lib/h5/h5-1.1.14.dev.js"></script>
 
-<!-- ここで作成したjsファイルを読み込む -->
-<script src="js/ShakeController.js"></script>
-<script src="js/PumpController.js"></script>
-<script src="js/BaloonController.js"></script>
-
 <title>pump demo</title>
 </head>
 <body>
-	<div id="container">
-		<!-- 		<canvas id="stringCanvas"></canvas> -->
-		<svg id="stringSvg">
+    <div id="descriptionContainer"> 
+        <div id="descriptionContent">
+            <div id="description">
+                <h1>Pump</h1>
+                <p>端末を振ると風船が膨らみます。</p>
+            </div>
+            <div type="BUTTON" name="start" id="startButton">はじめる</div>
+        </div>
+    </div>
+<div id="container">
+    <svg id="stringSvg">
 		<line id="string"></line>	
 		</svg>
 		<div id="pumpPicContainer">
 			<div class="pumpPic pumpPic1"></div>
 		</div>
-		<audio id="shooSound" src="res/sound/shoo.m4a" preload="auto" > </audio>
-		<audio id="cockSound" src="res/sound/cock.m4a" preload="auto" > </audio>
-		<audio id="bangSound" src="res/sound/bang.m4a" preload="auto" > </audio>
+		<audio id="shooSound" src="/res/sound/shoo.mp3" preload="auto" type="audio/mp3"> </audio>
+		<audio id="bangSound" src="res/sound/bang.mp3" preload="auto" type="audio/mp3"> </audio>
 		<div id="debugWindow"></div>
 		<div class="baloonContainer">
 			<div class="baloon"></div>
 		</div>
 	</div>
 </body>
+<div id="counter">
+    hoge
+</div>
+<!-- ここで作成したjsファイルを読み込む -->
+<script src="js/ShakeController.js"></script>
+<script src="js/PumpController.js"></script>
+<script src="js/BaloonController.js"></script>
+<script src="js/PageController.js"></script>
 </html>

@@ -1,59 +1,80 @@
-$(function() {
-	// コントローラの元となるオブジェクトを作成
-	var shakeController = {
-		_SHAKEINTERVAL : 300,
-		_maxAc : 0,
-		_lastShakedTimeMillis : 0,
+(function() {
+    /**
+     * ShakeController定義
+     */
+    var shakeController = {
+        _SHAKEINTERVAL : 170,
+        _maxAc : 0,
 
-		_isMoving : false,
-		_startMovingThreshold : 10.0,
-		_stopMovingThreshold : 6.0,
+        _isShaking : false,
+        _startShakingThreshold : 10.0,
+        _stopShakingThreshold : 6.0,
 
-		__name : 'pump.controller.ShakeController',
-		__construct : function() {
-			this.log.info('{0}を実行', '__construct');
-		},
-		__init : function() {
-			this.log.info('{0}を実行', '__init');
-		},
-		__ready : function() {
-			this.log.info('{0}を実行', '__ready');
-		},
-		'#pumpPicContainer click' : function(context, $el){
-			this.trigger('shake', {maxAc : 10});
-		},
-		'{window} devicemotion' : function(context, $el) {
-			context.event.preventDefault();
-			var currentTimeMillis = new Date().getTime();
+        _FRAME : 30,
 
-			// 直前のshakeから一定時間経っていなければ終了
-			if (currentTimeMillis - this._lastShakedTimeMillis < this._SHAKEINTERVAL) {
-				return;
-			}
+        _counter : 0,
 
-			// （重力加速度を除外した）加速度を取得する
-			var ac = context.event.originalEvent.acceleration;
+        /**
+         * コントローラ名
+         * @type String
+         */
+        __name : 'pump.controller.ShakeController',
 
-			// 加速度の最大値を更新
-			if (ac.y > this._maxAc) {
-				this._maxAc = ac.y;
-			}
+        __init : function(){
+            this._past = Date.now();
+        },
 
-			this.log.debug('加速度 x:{0}, y:{1}, z:{2}', ac.x, ac.y, ac.z);
-			if (!this._isMoving && ac.y > this._startMovingThreshold) {
-				this._isMoving = true;
-			}
-			if (this._isMoving && ac.y < this._stopMovingThreshold) {
-				this.trigger('shake', {
-					maxAc : this._maxAc
-				});
-				this._isMoving = false;
-				this._maxAc = 0;
-				this._lastShakedTimeMillis = currentTimeMillis;
-			}
-		}
-	};
+        /*
+         * デバッグ用
+         */
+        '.shakeButton click' : function(context, $el){
+            context.event.preventDefault();
+            this.trigger('shake', {maxAc : 10});
+        },
 
-	// shakeControllerをグローバルに公開
-	h5.core.expose(shakeController);
-});
+        /*
+         * 加速度センサーのイベント
+         */
+        '{window} devicemotion' : function(context, $el) {
+
+            var now = Date.now();
+
+            // （重力加速度を除外した）加速度
+            var ac = context.event.originalEvent.acceleration;
+            var score = this._magnitude(ac);
+
+            context.event.preventDefault();
+
+            // 直前のshakeから一定時間経っていなければ終了
+            // this.log.debug(now - this._past);
+            if (now - this._past < this._SHAKEINTERVAL) {
+                return;
+            }
+
+            // 加速度の最大値を更新
+            if (score > this._maxAc) {
+                this._maxAc = score;
+            }
+
+            // isShakingフラグが立つ、降りるタイミングでイベント発火
+            if (!this._isShaking && score > this._startShakingThreshold) {
+                this._isShaking = true;
+            }
+            if (this._isShaking && score < this._stopShakingThreshold) {
+                this._isShaking = false;
+                var evArg = {maxAc : this._maxAc};
+                this.log.debug(evArg, this.__name);
+                this.trigger('shake', evArg);
+                this._maxAc = 0;
+                this._past = now;
+            }
+        },
+
+        _magnitude : function(ac){
+            return Math.sqrt(Math.pow(ac.x, 2) + Math.pow(ac.y, 2) + Math.pow(ac.z, 2));
+        }
+    };
+
+    // shakeControllerをグローバルに公開
+    h5.core.expose(shakeController);
+})();

@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="pragma" content="no-cache" />
+		<meta http-equiv="cache-control" content="no-cache" />
+		<meta name="viewport" content="width=device-width">
+
+		<!-- IE8以下なら1系、それ以外なら2系のjQueryを使用する -->
+		<!--[if lt IE 9]>
+			<script src="lib/jquery/jquery-1.12.3.js"></script>
+		<![endif]-->
+		<!--[if gte IE 9]><!-->
+			<script src="lib/jquery/jquery-2.2.3.js"></script>
+		<!--<![endif]-->
+
+		<!-- ライブラリCSS -->
+		<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="lib/hifive/h5.css" />
+		<link rel="stylesheet" href="lib/hifive/ui/DividedBox.css">
+		<link rel="stylesheet" href="lib/hifive/ui/AccordionPanel.css">
+		<link rel="stylesheet" href="lib/jstree/themes/default/style.css" />
+
+		<!-- アプリCSS -->
+		<link href="css/sample.css" rel="stylesheet" />
+
+		<!-- ライブラリJS -->
+		<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+		<script src="lib/hifive/ejs-h5mod.js"></script>
+		<script src="lib/hifive/h5.dev.js"></script>
+		<script src="lib/hifive/ui/DividedBox.js"></script>
+		<script src="lib/hifive/ui/AccordionPanel.js"></script>
+		<script src="lib/ejs/1.0/view.js"></script>
+		<script src="lib/jstree/jstree.js"></script>
+
+		<!-- アプリJS -->
+		<script src="js/util.js"></script>
+		<script src="js/TreeViewController.js"></script>
+		<script src="js/AppPurchaseManagerLogic.js" /></script>
+		<script src="js/AppPurchaseManagerController.js" /></script>
+		<script src="js/PageController.js" /></script>
+		<script src="js/index.js"></script>
+	</head>
+	<body>
+		<div class="desktop dividedBox vertical">
+			<div class="header fixedSize"></div>
+			<div class="appRoot autoSize"></div>
+		</div>
+	</body>
+</html>

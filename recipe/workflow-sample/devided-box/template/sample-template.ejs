@@ -1,0 +1,146 @@
+<script type="text/ejs" id="sample.AppPurchaseManagerController">
+	<div class="dividedBox horizontal fill fullHeight">
+		<div class="box panelBox fill keepSize" data-default-state="normal" data-box-name="ショートカット" data-normal-state-size="100">
+			<div class="contentWrapper">
+				<div class="shortcut fullHeight"></div>
+			</div>
+		</div>
+		<div class="dividedBox vertical full fullHeight">
+			<div class="box panelBox fill autoSize" data-default-state="normal" data-box-name="一覧">
+				<div class="gridViewer fullHeight"></div>
+			</div>
+			<div class="box panelBox fill autoSize" data-default-state="normal" data-box-name="詳細">
+				<div class="detail fullHeight"></div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ejs" id="sample.TreeViewController">
+	<div class="jstree" style="width:100%;height:100%;"></div>
+</script>
+
+<script type="text/ejs" id="sample.GridViewerController">
+	<div class="innerDividedBox fullHeight vertical">
+		<div class="filterForm row fixedSize">
+			<div class="col-md-12">
+				<div class="filterForm">
+					<div class="row">
+						<div class="col-md-1 col-xs-2">
+							<label>優先度</label>
+						</div>
+						<div class="col-md-2 col-xs-3">
+							[%
+							var options = [{value:'',text:'全て'},{value:'0',text:'低め'},{value:'1',text:'通常'},{value:'2',text:'高め'},{value:'3',text:'急いで'}];
+							%]
+							[%:= select_tag('priority', '', options, {'class': 'form-control input-sm'}) %]
+						</div>
+						<div class="col-md-1  col-xs-2">
+							<label>申請月</label>
+						</div>
+						<div class="col-md-2 col-xs-3">
+							[% var date = new Date(); var y = date.getFullYear(); var m = date.getMonth()+1;
+							var options = [{value:'', text:'全て'}];
+							for(var i = 0; i < 5; i++){
+								if(m===0){m=12;y--;}
+								var val = y + '/' + (m<10?'0'+m:m);
+								options.push({value:val, text:val});
+								m--;
+							}
+							%]
+							[%:= select_tag('applicantMonth', '', options, {'class': 'form-control input-sm'}) %]
+						</div>
+						<div class="col-md-1 col-xs-1">
+							<strong class="gridDataLength">0</strong>件を表示
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="autoSize gridWrapperBox">
+			<div class="gridWrapper fullHeight">
+				<div class="grid"></div>
+				<span class="glyphicon glyphicon-arrow-down trackend-sign hidden"></span>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ejs" id="sample.DetailController">
+	<p>選択した行の詳細を表示します</p>
+</script>
+
+<script type="text/ejs" id="purchaseDetail">
+	<div class="detailScroll">
+		[%
+		var notApprovedIds = [];
+		for(var i = 0, l = details.length; i < l; i++){
+			var detail = details[i];
+			if(detail.status !== 'approved') { notApprovedIds.push(detail.id);}
+		%]
+		<div class="purchaseBox [%= detail.status %]" data-id="[%= detail.id %]">
+			<div class="row">
+				<div class="col-xs-12">
+					<strong class="approvedBadge"><span class="glyphicon glyphicon-ok" style="color:green"></span>承認済</strong>
+					<h4>[%= detail.item %]</h4>
+					<span class="approvedBadge"><span class="btn btn-default openPurchase">詳細を開く</span></span>
+					<p>#[%= detail.idText %]</p>
+				</div>
+			</div>
+			<div class="purchaseDetail  [%= detail.status==='approved'? 'hidden':'' %]">
+				<div class="row">
+					<div class="col-xs-2">
+						<label>ステータス</label>
+					</div>
+					<div class="col-xs-4 statusInfo">
+						[%= detail.statusText %]
+					</div>
+					<div class="col-xs-2">
+						<label>申請日</label>
+					</div>
+					<div class="col-xs-4">
+						[%= detail.applicationDate %]
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-2">
+						<label>優先度</label>
+					</div>
+					<div class="col-xs-4">
+						[%= detail.priorityText %]
+					</div>
+					<div class="col-xs-2">
+						<label>期日</label>
+					</div>
+					<div class="col-xs-4">
+						[%= detail.dueDate %]
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-2">
+						<label>申請者</label>
+					</div>
+					<div class="col-xs-4">
+						[%= detail.applicant %]
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<label>理由</label>
+						<p>[%= detail.reason %]</p>
+					<div class="btn btn-default pull-right confirm" data-confirm-targets="[%= detail.id %]"><span class="glyphicon glyphicon-ok" style="color:green"></span>承認</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		[% } %]
+		<div class="fixBottom confirmForm">
+			<div class="form-inline">
+				[% if(notApprovedIds.length){ %]
+				<div class="btn btn-default pull-right confirm" data-confirm-targets="[%= notApprovedIds.join(',') %]"><span class="glyphicon glyphicon-ok" style="color:green"></span>全て承認</div>
+				[% } %]
+				<span>未承認 全<strong class="notApprovedIdsLength">[%= notApprovedIds.length %]</strong>件</span>
+			</div>
+		</div>
+	</div>
+</script>

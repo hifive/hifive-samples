@@ -1,0 +1,146 @@
+@charset 'utf-8';
+
+html,body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+/************** AccordionPanel,DividedBox設定 ****************/
+.dividedBox .dividerHandler {
+	display: none !important;
+}
+
+.dividedBox>.divider {
+	background-color: #0c0c0c;
+}
+
+.dividedBox.horizontal>.divider {
+	cursor: col-resize;
+}
+
+.dividedBox.vertical>.divider {
+	cursor: row-resize;
+}
+
+.boxContent {
+	background-color: #f5fafa;
+}
+
+/************** その他共通設定 ****************/
+.desktop {
+	height: 100%;
+	width: 100%;
+	font-family: Meiryo;
+	font-size: 12px;
+	background: radial-gradient(#444 0, #222 100%);
+}
+
+/************** アプリケーション設定 *********/
+.shortcut {
+	min-width: 200px;
+}
+
+.filterForm label {
+	line-height: 2em;
+}
+
+.fullHeight {
+	height: 100%;
+}
+
+.detailScroll {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.confirmForm {
+	background-color: #ddd;
+	width: 100%;
+	padding: 10px;
+	line-height: 2em;
+}
+
+.fixBottom {
+	position: absolute;
+	bottom: 0;
+}
+
+.purchaseBox {
+	background-color: #fffffc;
+	padding: 10px;
+	border: 1px solid #ccc;
+	margin: 10px;
+}
+
+.purchaseBox.approved {
+	background-color: #eee;
+}
+
+.purchaseBox .approvedBadge {
+	display: none;
+}
+
+.purchaseBox.approved .approvedBadge {
+	display: block;
+}
+
+.purchaseBox.approved .confirm {
+	display: none;
+}
+
+/**** グリッドビュー ****/
+.filterForm {
+	padding: 5px 5px;
+}
+
+/**** 詳細ビュー ****/
+.detail {
+	font-size: 14px;
+}
+
+/********* グリッド *********/
+.grid {
+	background-color: #F3F8F8;
+	height: 100%;
+	width: 100%;
+	cursor: default;
+}
+
+.grid tr:nth-child(even) .gridCell {
+	background: #f2f2f2;
+}
+
+.gridCellFrame {
+	background-color: #F5FAFA;
+}
+
+.gridPropertyHeader {
+	background-image: -webkit-linear-gradient(top, #f9f9f9, #e3e4e6);
+	background-image: -moz-linear-gradient(top, #f9f9f9, #e3e4e6);
+	background-image: -ms-linear-gradient(top, #f9f9f9, #e3e4e6);
+	background-image: -o-linear-gradient(top, #f9f9f9, #e3e4e6);
+	background-image: linear-gradient(top, #f9f9f9, #e3e4e6);
+}
+
+.gridCell {
+	white-space: nowrap;
+	font-size: 12px;
+	line-height: 2em;
+	padding-left: 2px;
+}
+
+/** カラム移動 **/
+.gridHeaderRowsBox .gridCell {
+	cursor: e-resize;
+}
+
+.gridHeaderRowsBox .gridCell .gridSortIcon {
+	cursor: default;
+}
+
+.trackend-sign {
+	position: absolute; /* trackmoveで入れ替え先を表す矢印のクラス */
+}

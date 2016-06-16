@@ -3,7 +3,7 @@ $(function() {
 	var pumpController = {
 		_WAITTIME : 200,
 		_PUMP2AIRRATE : 800,
-		_PICPATH : 'res/picture/pump',
+		_PICPATH : './res/picture/pump',
 		__name : 'pump.controller.PumpController',
 
 		shooSound : null,

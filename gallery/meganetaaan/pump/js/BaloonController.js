@@ -51,22 +51,17 @@ $(function() {
 			var $baloon = this.$find('.baloon');
             if(!$baloon[0])
                 return;
-			var x = parseInt($baloon.offset().left) + parseInt($baloon.width())
-					* 0.5;
-			var y = parseInt($baloon.offset().top) + parseInt($baloon.height())
-					* 0.5;
-			var $pumpPicContainer = this.$find('#pumpPicContainer');
-			var tiedY = $pumpPicContainer.offset().top
-            + ($pumpPicContainer.height() * 0.8);
-			var tiedX = $pumpPicContainer.offset().left
-            + ($pumpPicContainer.width() * 0.4);
+			var tiedX = 10;
+			var tiedY = 400;
+			var x = 50;
+			var y = 0;
 			var $line = this.$find("#stringSvg #string");
 			this.log.debug('from({0}, {1}) to({2}, {3})', x, y, tiedX, tiedY);
 
-			$line.attr('x1', tiedX);
-			$line.attr('y1', tiedY);
-			$line.attr('x2', x);
-			$line.attr('y2', y);
+			$line.attr('x1', x);
+			$line.attr('y1', y);
+			$line.attr('x2', tiedX);
+			$line.attr('y2', tiedY);
 		},
 
 		_cubeRt : function(v) {
@@ -84,7 +79,7 @@ $(function() {
 			this._bangSound.play();
 
 			this.$find('#string').css({visibility: "hidden"});
-			
+
 			this._air = 100;
 			setTimeout(this.own(function() {
 				this.$find('.baloonContainer').append(

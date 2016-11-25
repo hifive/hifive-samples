@@ -10,10 +10,6 @@
         _startShakingThreshold : 10.0,
         _stopShakingThreshold : 6.0,
 
-        _FRAME : 30,
-
-        _counter : 0,
-
         /**
          * コントローラ名
          * @type String

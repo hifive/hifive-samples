@@ -1,97 +1,94 @@
 $(function() {
-	// コントローラの元となるオブジェクトを作成
-	var baloonController = {
-		_air : 100,
-		_capacity : 450000,
-		_bangSound : null,
-		_WAITTIME : 1000,
+    // コントローラの元となるオブジェクトを作成
+    var balloonController = {
+        _air : 100,
+        _capacity : 450000,
+        _bangSound : null,
+        _$balloonContainer : null,
+        _$balloon : null,
+        _$stringSvg : null,
 
-		__name : 'pump.controller.BaloonController',
-		__construct : function() {
-			this.log.info('{0}を実行', '__construct');
-		},
-		__init : function() {
-			this.log.info('{0}を実行', '__init');
-		},
-		__ready : function() {
-			this.log.info('{0}を実行', '__ready');
-			var $pumpPicContainer = this.$find('#pumpPicContainer');
-			var tiedY = $pumpPicContainer.offset().top
-					+ $pumpPicContainer.height() - 20;
-			var tiedX = $pumpPicContainer.offset().left
-					+ ($pumpPicContainer.width() * 0.25) + 20;
-			this.tie(tiedX, tiedY);
+        __name : 'pump.controller.balloonController',
+        __construct : function() {
+            this.log.info('{0}を実行', '__construct');
+        },
+        __init : function() {
+            this.log.info('{0}を実行', '__init');
+        },
+        __ready : function() {
+            this.log.info('{0}を実行', '__ready');
             this._bangSound = document.getElementById('bangSound');
-		},
+            // jQueryオブジェクトをキャッシュ
+            this._$balloonContainer = this.$find('.balloonContainer');
+            this._$balloon = this._$balloonContainer.find('.balloon');
+            this._$line = this._$balloonContainer.find('#stringSvg #string');
+            this._$human = this.$find('#pumpPicContainer');
+        },
 
-		'{document} pump' : function(context, $el) {
-			this._air += context.evArg.blow;
-			this._drawLine();
-			if (this._air > this._capacity) {
-				this.bang();
-				return;
-			}
-			var r = this._squareRt(this._air);
-			var $baloon = this.$find('.baloon');
-			this.log.debug('baloonの半径を{0}に設定', r);
-			$baloon.css({
-				width : r * 2,
-				height : r * 2
-			});
-		},
+        '{document} showBalloon' : function() {
+            // バルーンの表示、初期サイズを設定
+            this._$balloonContainer.removeClass('hidden');
+            this._$balloon.css({
+                width : 10,
+                height : 10
+            });
+            this.log.debug('balloonの半径を5に設定');
+            // 棒を描画
+            this._drawLine();
+        },
 
-		tie : function(x, y) {
-			this._isTied = true;
-			this._tiedX = x;
-			this._tiedY = y;
-			this._drawLine();
-		},
-
-		_drawLine : function() {
-			var $baloon = this.$find('.baloon');
-            if(!$baloon[0])
+        '{document} pump' : function(context, $el) {
+            this._air += context.evArg.blow;
+            if (this._air > this._capacity) {
+                this.bang();
                 return;
-			var tiedX = 10;
-			var tiedY = 400;
-			var x = 50;
-			var y = 0;
-			var $line = this.$find("#stringSvg #string");
-			this.log.debug('from({0}, {1}) to({2}, {3})', x, y, tiedX, tiedY);
+            }
+            var r = this._squareRt(this._air);
+            this._$balloon.css({
+                width : r * 2,
+                height : r * 2
+            });
+            this.log.debug('balloonの半径を{0}に設定', r);
+        },
 
-			$line.attr('x1', x);
-			$line.attr('y1', y);
-			$line.attr('x2', tiedX);
-			$line.attr('y2', tiedY);
-		},
+        '{window} resize' : function() {
+            // 配置が変わるので棒を再描画
+            this._drawLine();
+        },
 
-		_cubeRt : function(v) {
-			return Math.pow(v * 0.75, 1 / 3);
-		},
-		_squareRt : function(v) {
-			return Math.pow(v / (Math.PI * 2), 1 / 2);
-		},
+        _drawLine : function() {
+            if (this._$balloon.length === 0) {
+                return;
+            }
+            // バルーンと人の位置から棒の描画座標を求める
+            var balloonOffset = this._$balloon.position();
+            var tiedX = balloonOffset.left + this._$balloon.outerWidth() * 0.5;
+            var tiedY = balloonOffset.top + this._$balloon.outerHeight() * 0.5;
 
-		bang : function() {
-			this.$find('.baloon').remove();
-			if (this._bangSound.readyState !== 4) {
-				this._bangSound.load();
-			}
-			this._bangSound.play();
+            var humanOffset = this._$human.position();
+            var x = humanOffset.left;
+            var y = humanOffset.top;
 
-			this.$find('#string').css({visibility: "hidden"});
+            this.log.debug('from({0}, {1}) to({2}, {3})', x, y, tiedX, tiedY);
 
-			this._air = 100;
-			setTimeout(this.own(function() {
-				this.$find('.baloonContainer').append(
-						'<div class="baloon"></div>');
-			    this.$find('#string').css({visibility: "visible"});
-                this._drawLine();
-			}), this._WAITTIME);
+            this._$line.attr('x1', tiedX);
+            this._$line.attr('y1', tiedY);
+            this._$line.attr('x2', x);
+            this._$line.attr('y2', y);
+        },
+
+        _squareRt : function(v) {
+            return Math.pow(v / (Math.PI * 2), 1 / 2);
+        },
+
+        bang : function() {
+            this._$balloonContainer.addClass('hidden');
+            this._bangSound.play();
+            this._air = 100;
             this.trigger('bang');
-		}
-	};
+        }
+    };
 
-	h5.core.expose(baloonController);
-	// baloonControllerを要素にバインド
-	h5.core.controller('#container', baloonController);
+    // balloonControllerを要素にバインド
+    h5.core.controller('#main', balloonController);
 });

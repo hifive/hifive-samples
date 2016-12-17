@@ -1,0 +1,42 @@
+<!--Copyright (C) 2012 NS Solutions Corporation, All Rights Reserved.  -->
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../lib/jquery/jquery.js" data-h5-module="jquery"></script>
+<script src="../lib/h5/h5.dev.js" data-h5-module="hifive"></script>
+<script type="text/javascript">
+	function speak(text) {
+		if (typeof window.SpeechSynthesisUtterance === 'undefined') {
+			return;
+		}
+		var speech = new SpeechSynthesisUtterance();
+		speech.rate = 0.6; // スピード
+		speech.volume = 1; // 音量
+		speech.pitch = 0; // ピッチ
+		speech.text = text;
+		speech.lang = 'ja-JP'; // 言語
+
+		speechSynthesis.speak(speech);
+	}
+
+	var speechController = {
+		__name: 'SpeechController',
+		'button click': function() {
+			// idがwordの値(文字列)を取得して、speak関数に渡す
+			speak(this.$find('#word').val());
+		}
+	};
+
+	$(function() {
+		h5.core.controller('body', speechController);
+	});
+</script>
+</head>
+
+<body>
+
+	<textarea id="word" rows="4" cols="40"></textarea>
+	<button>読み上げる</button>
+
+</body>
+</html>

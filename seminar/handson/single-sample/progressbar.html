@@ -1,0 +1,37 @@
+<!--Copyright (C) 2012 NS Solutions Corporation, All Rights Reserved.  -->
+<html>
+<head>
+<meta charset="UTF-8">
+<title>プログレスバーサンプル</title>
+</head>
+<script src="../lib/jquery/jquery.js" data-h5-module="jquery"></script>
+<link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
+<script src="../lib/h5/h5.dev.js" data-h5-module="hifive"></script>
+<script>
+	var progressbarSampleController = {
+		__name: 'ProgressbarSampleController',
+		__ready: function(){
+			// 200ms秒ごとにプログレスバーを減らすサンプルです。
+			var rate = 100;
+			var timerId = setInterval(this.own(function() {
+				// 200ms毎に処理を実行
+				if (rate-- === 0) {
+					// 0%になったら終了
+					clearInterval(timerId);
+				}
+				// プログレスバーの幅を指定。スタイル"width"にパーセンテージで指定する。
+				this.$find('#progressBar').css('width', rate + '%');
+			}), 200);
+		}
+	};
+	$(function() {
+		h5.core.controller('body', progressbarSampleController);
+	});
+</script>
+<body>
+	<!-- プログレスバー -->
+	<div class="progress">
+		<div class="progress-bar progress-bar-info" role="progressbar" id="progressBar" style="width: 100%"></div>
+	</div>
+</body>
+</html>

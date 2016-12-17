@@ -1,0 +1,29 @@
+<!--Copyright (C) 2012 NS Solutions Corporation, All Rights Reserved.  -->
+<html>
+<head>
+<meta charset="UTF-8">
+<title>テキスト表示サンプル</title>
+</head>
+<script src="../lib/jquery/jquery.js" data-h5-module="jquery"></script>
+<script src="../lib/h5/h5.dev.js" data-h5-module="hifive"></script>
+<script>
+	$(function() {
+		//テキスト表示するサンプルです。
+		var textController = {
+			__name : 'textController',
+
+			'input[type="text"] change': function(){
+				var val1 = this.$find('input[name="val1"]').val();
+				var val2 = this.$find('input[name="val2"]').val();
+				var sum = parseInt(val1) + parseInt(val2);
+				this.$find('#sum').text(sum);
+			}
+		};
+		h5.core.controller('body', textController);
+	});
+</script>
+<body>
+	数字を入力すると合計を計算します。<br/>
+	<input name="val1" type="text" value="0"/> + <input name="val2" type="text" value="0"/> = <span id="sum"></span>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!--Copyright (C) 2012 NS Solutions Corporation, All Rights Reserved.  -->
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../lib/jquery/jquery.js" data-h5-module="jquery"></script>
+<script src="../lib/h5/h5.dev.js" data-h5-module="hifive"></script>
+<script type="text/javascript">
+	function loadAudio(el) {
+		var df = h5.async.deferred();
+		if (!el || el.readyState == null) {
+			// elにreadyStateが無ければfail
+			return df.reject().promise();
+		}
+		if (el.readyState === el.HAVE_ENOUGH_DATA) {
+			// ロード済み
+			return df.resolve().promise();
+		}
+		el.addEventListener('canplay', function() {
+			df.resolve();
+		});
+		el.load();
+		return df.promise();
+	}
+
+	var audioController = {
+		__name: 'AudioController',
+		'button click': function() {
+		    var el = this.$find('#startAudio')[0];
+		    loadAudio(el).done(function(){
+		        el.play();
+		    });
+		}
+	};
+
+	$(function() {
+		h5.core.controller('body', audioController);
+	});
+</script>
+</head>
+
+<body>
+	<audio id="startAudio" src="../res/audio/chime.mp3" style="display:none"></audio>
+	<button style="width: 100px; height:100px;">音を鳴らす</button>
+	<div class="howto">
+	   <img src="../howto/audio1.png">
+	
+	</div>
+</body>
+</html>

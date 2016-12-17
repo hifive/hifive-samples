@@ -1,0 +1,73 @@
+<!--Copyright (C) 2012 NS Solutions Corporation, All Rights Reserved.  -->
+<html>
+<head>
+<meta charset="UTF-8">
+<title>地図と住所の表示</title>
+</head>
+<link rel="stylesheet" href="../lib/h5/h5.css" />
+<style>
+	.gmap{
+		width: 400px;
+		height: 400px;
+	}
+	table {
+		width: 100%;
+	}
+	th {
+		width: 80px;
+	}
+</style>
+<script src="../lib/jquery/jquery.js" data-h5-module="jquery"></script>
+<script src="../lib/h5/h5.dev.js" data-h5-module="hifive"></script>
+<script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<script src="js/MapController.js"></script>
+<script>
+	$(function() {
+		var indexController = {
+			__name: 'IndexController',
+			__ready: function() {
+				// デフォルトの位置を設定
+				var defaultPostion = '35.454771,139.629192';
+				// 地図コントローラをバインド
+				h5.core.controller(this.$find('.gmap-wrapper'), app.controller.MapController, {
+					defaultPos: defaultPostion
+				});
+			},
+
+			// 地図から位置情報が設定されたときに上がってくるイベント
+			'.gmap-wrapper setCoords': function(context) {
+				var coords = context.evArg.coords;
+				this.$find('#place').text(coords.latitude + ',' + coords.longitude);
+			},
+
+			// 住所が設定された時に上がってくるイベント
+			'.gmap-wrapper setAddress': function(context) {
+				var address = context.evArg.address;
+				this.$find('#address').text(address);
+			}
+		};
+		h5.core.controller('body', indexController);
+	});
+</script>
+<body>
+	<h1>地図と住所の表示</h1>
+	<p>Google Maps API を使った地図と住所を表示するサンプルです。</p>
+	<div class="gmap-wrapper">
+		<div class="gmap">
+			<!-- 地図を表示する領域 -->
+		</div>
+	</div>
+	<table>
+		<tbody>
+			<tr>
+				<th><label>位置情報</label></th>
+				<td><span id="place"></span></td>
+			</tr>
+			<tr>
+				<th><label>住所</label></th>
+				<td><span id="address"></span></td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

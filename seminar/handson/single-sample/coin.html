@@ -1,0 +1,135 @@
+<!--Copyright (C) 2013 NS Solutions Corporation, All Rights Reserved.  -->
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@-webkit-keyframes 'fadeIn' {
+	0% {	opacity:1;-webkit-transform: rotateY(-90deg);}
+	49% {opacity:1;}
+	50% {opacity:0;-webkit-transform: rotateY(90deg);}
+	100% {opacity:0;}
+}
+
+@-webkit-keyframes 'fadeOut' {
+ 	0% {opacity:0;}
+	49% {opacity:0;}
+	50% {opacity:1;-webkit-transform: rotateY(-90deg);}
+	99% {opacity:1;}
+	100% {opacity:0;-webkit-transform: rotateY(90deg);}
+}
+
+@-webkit-keyframes bounce {
+    0%   { top:-400px; -webkit-animation-timing-function:ease-in;  }
+    9%  { top:0px; -webkit-animation-timing-function:ease-out; }
+    14%  { top:-100px; -webkit-animation-timing-function:ease-in;  }
+    18%  { top:0px; -webkit-animation-timing-function:ease-out; }
+    20%  { top:-28px; -webkit-animation-timing-function:ease-in;  }
+    23%  { top:0px; -webkit-animation-timing-function:ease-out; }
+    24%  { top:-8px; -webkit-animation-timing-function:ease-in;  }
+    25% { top:0px; }
+    100% { top:0px; }
+}
+
+.coin {
+	position:absolute;
+}
+.front {
+	position:absolute;
+}
+.back {
+	position:absolute;
+}
+.coin .front {
+	-webkit-animation-name: 'fadeIn';
+	-webkit-animation-duration: 2s;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-iteration-count: infinite;
+}
+.coin .back {
+	-webkit-animation-name: 'fadeOut';
+	-webkit-animation-duration: 2s;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-iteration-count: infinite;
+}
+.coin {
+	-webkit-animation-name: 'bounce';
+	-webkit-animation-duration: 8s;
+	-webkit-animation-iteration-count: 1;
+}
+
+</style>
+
+</head>
+<script src="../lib/jquery/jquery.js" data-h5-module="jquery"></script>
+<script src="../lib/h5/h5.dev.js" data-h5-module="hifive"></script>
+<script>
+	/**
+	 * 回転しながら降ってくるコインを追加します。
+	 *
+	 * @param frontImg {DOM|jQuery} コインの表画像
+	 * @param backImg {DOM|jQuery} コインの裏画像
+	 * @param size {Integer} コインの直径
+	 * @param [posiiton={top:0,left:0}] {Object} top,leftを持つオブジェクトでコインを降らせる位置を指定
+	 * @param [target=document.body] {DOM|jQuery} コインを追加するエレメント
+	 */
+	function coin(frontImg, backImg, size, position, target) {
+		target = target || document.body;
+		var styleObj = {
+			display: 'block'
+		};
+		if (size) {
+			styleObj.height = size;
+			styleObj.width = size;
+		}
+		// 表面の画像をコピー
+		$frontImg = $(frontImg).clone();
+		$frontImg.css(styleObj);
+		// 裏面の画像をコピー
+		$backImg = $(backImg).clone();
+		$backImg.css(styleObj);
+		// クラスを指定
+		var $coin = $('<div class="coin">');
+		var $front = $('<div class="front">');
+		var $back = $('<div class="back">');
+		$front.append($frontImg);
+		$back.append($backImg);
+		$coin.append($front).append($back);
+		position = position || {
+			top: 0,
+			left: 0
+		};
+		// 上から落ちてくるようにスタイルを指定
+		$coin.css({
+			'-webkit-transform': 'translateY(' + position.top + 'px)',
+			top: 0,
+			left: position.left
+		});
+		// 画面上に追加(回転の開始)
+		$(target).append($coin);
+	}
+
+	var coinSampleContorller = {
+		__name: 'CoinSampleController',
+		'button click': function() {
+			// コイン画像の直径を指定
+			var size = 80;
+			// コイン画像が降ってくる位置を指定
+			var position = {
+				left: parseInt(Math.random() * 300),
+				top: 300
+			};
+			// コインの表の画像、裏の画像、直径、降ってくる位置を引数に渡して呼び出す
+			coin('#coinFrontImg', '#coinBackImg', size, position);
+		}
+	};
+	$(function() {
+		h5.core.controller('body', coinSampleContorller);
+	});
+</script>
+<body>
+	<button>クリックするとコインが降ってきます</button>
+	<!-- 非表示にして置いておく -->
+	<img id="coinFrontImg" src="../res/image/TKY201202210200.png" style="display:none"/>
+	<img id="coinBackImg" src="../res/image/TKY201202210201.png" style="display:none"/>
+</body>
+</html>

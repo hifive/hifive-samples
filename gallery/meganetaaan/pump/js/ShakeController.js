@@ -37,6 +37,11 @@
 
             // （重力加速度を除外した）加速度
             var ac = context.event.originalEvent.acceleration;
+
+            // NOTE: デバイスによってaccelerationが取得できない（値にnullが入る）事象への暫定対処
+            if (ac.x == null) {
+                ac = context.event.originalEvent.accelerationIncludingGravity;
+            }
             var score = this._magnitude(ac);
 
             context.event.preventDefault();
